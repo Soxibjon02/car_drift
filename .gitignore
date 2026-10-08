@@ -5,4 +5,6 @@ test_cards_and_light_theme.js
 test_neon_db.js
 test_youtube_neon_admin.js
 update_video_ids.js
+generate_icons.js
+test_mobile_and_pwa.js
 .env

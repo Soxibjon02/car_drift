@@ -6,8 +6,10 @@ dotenv.config();
 
 const { Pool } = pg;
 
+const NEON_DEFAULT_URL = "postgresql://neondb_owner:npg_Imu9voAFRtE2@ep-billowing-silence-b1vq1ylz-pooler.c-5.eu-central-1.aws.neon.tech/neondb?sslmode=require";
+
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || NEON_DEFAULT_URL,
   ssl: {
     rejectUnauthorized: false
   }

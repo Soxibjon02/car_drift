@@ -507,6 +507,20 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+// Lazy DB init for Vercel Serverless Functions
+let dbInitPromise = null;
+app.use(async (req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    if (!dbInitPromise) {
+      dbInitPromise = initDb().catch((err) => {
+        console.error("Vercel Serverless DB init error:", err);
+      });
+    }
+    await dbInitPromise;
+  }
+  next();
+});
+
 // --------------------------------------------------------------------------
 // STATIC FILES & SPA FALLBACK
 // --------------------------------------------------------------------------
@@ -539,4 +553,8 @@ async function startServer() {
   }
 }
 
-startServer();
+if (process.env.VERCEL !== "1" && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  startServer();
+}
+
+export default app;

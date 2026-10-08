@@ -8,17 +8,24 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  width: 100%;
+  max-width: 100%;
 }
 
 #page-mount {
   position: relative;
   z-index: 2;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 #footer-mount {
   position: relative;
   z-index: 2;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Layout Container */
@@ -29,12 +36,16 @@
   margin-right: auto;
   padding-left: var(--space-6);
   padding-right: var(--space-6);
+  box-sizing: border-box;
 }
 
 .section-wrapper {
   padding-top: var(--space-20);
   padding-bottom: var(--space-20);
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .section-header {

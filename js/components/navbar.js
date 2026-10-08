@@ -44,6 +44,11 @@ export function renderNavbar(container, activeRoute = "home") {
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </button>
 
+          <!-- PWA Install Button -->
+          <button class="nav-action-btn" id="btn-pwa-install" title="Ilovani o'rnatish (Install App)" style="display:none; color:var(--accent);">
+            📥
+          </button>
+
           <!-- Audio Engine FX Toggle -->
           <button class="nav-action-btn" id="btn-sound-toggle" title="Acoustic Audio FX: ${soundOn ? 'ON' : 'OFF'}">
             <span style="font-size:0.8rem; font-family:var(--font-mono); font-weight:700;">${soundOn ? "FX" : "MUTE"}</span>
@@ -98,6 +103,18 @@ export function renderNavbar(container, activeRoute = "home") {
           <div class="brand-logo-text" style="font-size:1.15rem; font-weight:800;">DRIFT<span style="color:var(--accent);">VERSE</span></div>
           <button class="modal-close-btn" id="btn-close-drawer" style="position:static;">✕</button>
         </div>
+
+        <!-- PWA Install Button in Drawer -->
+        <button class="btn btn-primary" id="drawer-btn-pwa-install" style="display:flex; align-items:center; justify-content:center; gap:8px; font-size:0.85rem; padding:12px; margin-bottom:12px; width:100%;">
+          📱 Ilovani O'rnatish (Install App)
+        </button>
+
+        <!-- Quick Controls inside Drawer -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+          <button class="btn btn-secondary btn-sm" id="drawer-btn-search" style="font-size:0.75rem;">🔍 Qidiruv</button>
+          <button class="btn btn-secondary btn-sm" id="drawer-btn-sound" style="font-size:0.75rem;">${soundOn ? '🔊 Ovoz: ON' : '🔇 Ovoz: OFF'}</button>
+        </div>
+
         <a class="nav-link ${activeRoute === "home" ? "active" : ""}" data-route="home">Home</a>
         <a class="nav-link ${activeRoute === "cars" ? "active" : ""}" data-route="cars">Cars</a>
         <a class="nav-link ${activeRoute === "videos" ? "active" : ""}" data-route="videos">Videos</a>
@@ -105,7 +122,7 @@ export function renderNavbar(container, activeRoute = "home") {
         <a class="nav-link ${activeRoute === "rankings" ? "active" : ""}" data-route="rankings">Rankings</a>
         <a class="nav-link ${activeRoute === "trending" ? "active" : ""}" data-route="trending">Trending</a>
         <a class="nav-link ${activeRoute === "garage" ? "active" : ""}" data-route="garage">My Garage</a>
-        <a class="nav-link ${activeRoute === "admin" ? "active" : ""}" data-route="admin" style="color:var(--accent);">Control Center</a>
+        <a class="nav-link ${activeRoute === "admin" ? "active" : ""}" data-route="admin" style="color:var(--accent);">Admin Panel ${authService.isAdmin() ? '' : '🔒'}</a>
       </div>
     </div>
   `;
@@ -228,6 +245,24 @@ function attachNavbarEvents(container) {
   if (closeDrawerBtn && drawerOverlay) {
     closeDrawerBtn.addEventListener("click", () => {
       drawerOverlay.classList.remove("open");
+    });
+  }
+
+  const drawerSearchBtn = container.querySelector("#drawer-btn-search");
+  if (drawerSearchBtn && drawerOverlay) {
+    drawerSearchBtn.addEventListener("click", () => {
+      soundEngine.playClick();
+      drawerOverlay.classList.remove("open");
+      window.dispatchEvent(new CustomEvent("driftverse:open-search"));
+    });
+  }
+
+  const drawerSoundBtn = container.querySelector("#drawer-btn-sound");
+  if (drawerSoundBtn) {
+    drawerSoundBtn.addEventListener("click", () => {
+      const active = store.toggleSound();
+      if (active) soundEngine.playRev("turbo-v6");
+      drawerSoundBtn.textContent = active ? "🔊 Ovoz: ON" : "🔇 Ovoz: OFF";
     });
   }
 }

@@ -12,6 +12,7 @@ import { CarDetailModal } from "./components/carDetailModal.js";
 import { AuthModal } from "./components/authModal.js";
 import { scrollSequence } from "./services/scrollSequence.js";
 import { scrollAnimator } from "./services/scrollAnimations.js";
+import { pwa } from "./services/pwa.js";
 
 // Pages
 import { renderHomePage } from "./pages/home.js";

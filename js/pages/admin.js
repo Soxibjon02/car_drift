@@ -367,8 +367,8 @@ export async function renderAdminPage(container) {
  */
 function renderAdminLoginGateway(container) {
   container.innerHTML = `
-    <div class="section-wrapper" style="min-height:85vh; display:flex; align-items:center; justify-content:center; padding:3rem 1rem;">
-      <div style="width:100%; max-width:460px; background:var(--bg-card); border:1px solid var(--border-medium); border-radius:var(--radius-sm); padding:2.5rem 2rem; box-shadow:0 24px 60px rgba(0,0,0,0.7); backdrop-filter:blur(16px); text-align:center;">
+    <div class="section-wrapper" style="min-height:85vh; display:flex; align-items:center; justify-content:center; padding:2rem 1rem; width:100%; box-sizing:border-box;">
+      <div class="admin-security-gate-card" style="width:100%; max-width:440px; box-sizing:border-box; background:var(--bg-card); border:1px solid var(--border-medium); border-radius:var(--radius-sm); padding:2rem 1.5rem; box-shadow:0 24px 60px rgba(0,0,0,0.7); backdrop-filter:blur(16px); text-align:center;">
         
         <div style="font-size:3rem; margin-bottom:12px;">🔒</div>
         
