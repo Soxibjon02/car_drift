@@ -1,0 +1,100 @@
+/* ==========================================================================
+   DRIFTVERSE — Typography System (Editorial Automotive Journal)
+   Modern Grotesk Headings + Inter Body + Technical Telemetry Orbitron
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 5vw, 4.25rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: clamp(1.3rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+/* Technical Telemetry & Benchmark Numbers (Orbitron) */
+.telemetry-font,
+.telemetry-value,
+.countdown-display,
+.spec-val,
+.podium-num,
+.tech-metric {
+  font-family: var(--font-telemetry);
+  font-feature-settings: "tnum" on, "zero" on;
+}
+
+/* Editorial Eyebrow Tag */
+.section-tag {
+  font-family: var(--font-mono);
+  font-size: 0.725rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-tag::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  background-color: var(--accent);
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 600px;
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+/* Subtle editorial gradient headline */
+.headline-editorial-gradient {
+  background: linear-gradient(180deg, #FFFFFF 20%, #A5A5A5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

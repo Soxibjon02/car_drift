@@ -1,0 +1,1415 @@
+/* ==========================================================================
+   DRIFTVERSE — Core Components Stylesheet
+   Automotive Editorial Standards (Porsche / Ferrari / BMW M Media Style)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. NAVBAR
+   -------------------------------------------------------------------------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-height);
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 1000;
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-logo-icon {
+  width: 26px;
+  height: 26px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.brand-logo-text span {
+  color: var(--accent);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  list-style: none;
+}
+
+.nav-link {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-secondary);
+  position: relative;
+  padding: 0.4rem 0;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  transition: width var(--transition-fast);
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.nav-action-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+}
+
+.user-profile-menu {
+  position: relative;
+}
+
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.3rem 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.user-btn:hover {
+  border-color: var(--border-medium);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.user-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.user-name {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 230px;
+  background: #121212;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  padding: 0.65rem;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1010;
+}
+
+.user-dropdown.open {
+  display: flex;
+  animation: modalFadeIn 0.18s ease forwards;
+}
+
+.dropdown-header {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 4px;
+}
+
+.dropdown-user-role {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--accent);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  border-radius: var(--radius-xs);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   2. HERO SECTION (Cinematic Automotive Magazine Layout)
+   -------------------------------------------------------------------------- */
+.hero-section {
+  position: relative;
+  min-height: 86vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: transparent;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-video-bg {
+  display: none;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(7, 7, 7, 0.95) 0%,
+    rgba(7, 7, 7, 0.82) 42%,
+    rgba(7, 7, 7, 0.32) 75%,
+    rgba(7, 7, 7, 0.15) 100%
+  );
+}
+
+[data-theme="light"] .hero-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(245, 245, 247, 0.92) 0%,
+    rgba(245, 245, 247, 0.80) 42%,
+    rgba(245, 245, 247, 0.35) 75%,
+    rgba(245, 245, 247, 0.10) 100%
+  );
+}
+
+.hero-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+}
+
+[data-theme="light"] .hero-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
+
+.hero-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.25rem 0.65rem;
+  background: rgba(255, 77, 0, 0.08);
+  border: 1px solid rgba(255, 77, 0, 0.3);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-xs);
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 6.2vw, 5rem);
+  font-weight: 800;
+  line-height: 0.98;
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+}
+
+.hero-title-gradient {
+  color: var(--text-primary);
+  display: block;
+}
+
+.hero-description {
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin-bottom: var(--space-8);
+  line-height: 1.6;
+}
+
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-10);
+}
+
+.hero-telemetry-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.telemetry-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.telemetry-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.telemetry-value span {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.telemetry-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   HOME PAGE SECTION WRAPPERS (Translucent Glass Layers Allowing Canvas Through)
+   -------------------------------------------------------------------------- */
+.home-section-spotlight {
+  background: rgba(7, 7, 7, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+[data-theme="light"] .home-section-spotlight {
+  background: rgba(245, 245, 247, 0.35);
+}
+
+.home-section-trending {
+  background: transparent;
+}
+
+.home-section-vault {
+  background: rgba(7, 7, 7, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+[data-theme="light"] .home-section-vault {
+  background: rgba(245, 245, 247, 0.35);
+}
+
+.home-section-channels {
+  background: transparent;
+}
+
+.home-section-compare {
+  background: transparent;
+}
+
+/* SPOTLIGHT CARD (Frosted Glass Architecture) */
+.spotlight-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+}
+
+[data-theme="light"] .spotlight-card {
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+}
+
+.spotlight-media {
+  position: relative;
+  min-height: 380px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.spotlight-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.spotlight-gradient-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 65%, rgba(13, 13, 16, 0.85) 100%);
+}
+
+[data-theme="light"] .spotlight-gradient-scrim {
+  background: linear-gradient(90deg, transparent 65%, rgba(255, 255, 255, 0.85) 100%);
+}
+
+.spotlight-info-column {
+  padding: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: transparent;
+}
+
+/* DYNO COMPARE CARD (Frosted Glass) */
+.dyno-compare-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="light"] .dyno-compare-card {
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   3. CAR CARD (Automotive Catalog Standard, Image First, 6px Radius, Glass Body)
+   -------------------------------------------------------------------------- */
+.car-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--transition-normal), border-color var(--transition-normal), background-color var(--transition-normal), box-shadow var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--shadow-md);
+}
+
+.car-card:hover {
+  transform: translateY(-4px);
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="light"] .car-card {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(0, 0, 0, 0.09);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .car-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.09);
+}
+
+.car-card-media {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 ratio */
+  overflow: hidden;
+  background: transparent;
+}
+
+.car-card-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.car-card:hover .car-card-img {
+  transform: scale(1.04);
+}
+
+.car-card-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.car-card-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.car-action-icon-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(7, 7, 7, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 0.85rem;
+}
+
+[data-theme="light"] .car-action-icon-btn {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #111111;
+}
+
+.car-action-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="light"] .car-action-icon-btn:hover {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.car-action-icon-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #FFFFFF;
+}
+
+.car-rev-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(7, 7, 7, 0.82);
+  border: 1px solid var(--border-subtle);
+  color: #FFFFFF;
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  z-index: 2;
+  transition: all var(--transition-fast);
+}
+
+[data-theme="light"] .car-rev-btn {
+  background: rgba(255, 255, 255, 0.92);
+  color: #111111;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.car-rev-btn:hover {
+  background: #1F1F1F;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+[data-theme="light"] .car-rev-btn:hover {
+  background: #FFFFFF;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.car-card-body {
+  padding: 1.15rem;
+  display: flex;
+  background: transparent;
+  flex-direction: column;
+  flex: 1;
+}
+
+.car-card-brand {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.car-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+  line-height: 1.25;
+}
+
+.car-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0.65rem 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  margin-bottom: var(--space-4);
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.spec-val {
+  font-size: 0.925rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.spec-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.car-card-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   4. VIDEO CARD (Automotive Media Editorial Standard, Frosted Glass Body)
+   -------------------------------------------------------------------------- */
+.video-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--transition-normal), border-color var(--transition-normal), background-color var(--transition-normal), box-shadow var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+
+.video-card:hover {
+  transform: translateY(-4px);
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="light"] .video-card {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(0, 0, 0, 0.09);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .video-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.09);
+}
+
+.video-card-media {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 ratio */
+  background: transparent;
+  overflow: hidden;
+}
+
+.video-card-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.video-card:hover .video-card-img {
+  transform: scale(1.04);
+}
+
+.video-play-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.video-card:hover .video-play-overlay {
+  opacity: 1;
+}
+
+.play-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  padding-left: 2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform var(--transition-fast);
+}
+
+[data-theme="light"] .play-circle {
+  background: #0A0A0E;
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.video-card:hover .play-circle {
+  transform: scale(1.08);
+}
+
+.video-card-body {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: transparent;
+}
+
+.video-duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.video-card-body {
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.video-cars-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.video-car-chip {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-xs);
+  color: var(--text-secondary);
+}
+
+.video-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-meta-row {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   5. FILTER & CONTROLS BAR (Automotive Catalog Filter System)
+   -------------------------------------------------------------------------- */
+.filter-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 0.4rem 0.85rem;
+  font-family: var(--font-heading);
+  font-size: 0.785rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.filter-pill.active {
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--accent);
+}
+
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+}
+
+.search-input-wrap input {
+  width: 100%;
+  padding-left: 2.5rem;
+}
+
+.search-icon-inside {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
+   6. COMPARE ARENA & TECHNICAL SIDE-BY-SIDE
+   -------------------------------------------------------------------------- */
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.compare-card-slot {
+  background: var(--bg-card);
+  border: 1px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  text-align: center;
+  transition: all var(--transition-normal);
+}
+
+.compare-card-slot.filled {
+  border-style: solid;
+  border-color: var(--border-subtle);
+  justify-content: flex-start;
+  text-align: left;
+  padding: 0;
+  overflow: hidden;
+}
+
+.compare-empty-icon {
+  font-size: 2rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.comparison-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-bottom: var(--space-10);
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparison-table th, .comparison-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.875rem;
+}
+
+.comparison-table th {
+  background: rgba(255, 255, 255, 0.02);
+  font-family: var(--font-heading);
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-align: left;
+}
+
+.spec-bar-wrapper {
+  margin-top: 6px;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+}
+
+.spec-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-xs);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spec-leader {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   7. BATTLE SIMULATION MODAL (Fast & Cinematic, Clean 3-2-1 GO)
+   -------------------------------------------------------------------------- */
+.battle-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(16px);
+  z-index: 10500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+}
+
+.battle-modal-content {
+  width: 100%;
+  max-width: 820px;
+  background: #0E0E0E;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  position: relative;
+  text-align: center;
+}
+
+.countdown-display {
+  font-size: clamp(4.5rem, 12vw, 7.5rem);
+  font-weight: 900;
+  color: #FFFFFF;
+  margin-bottom: var(--space-4);
+  line-height: 1;
+}
+
+.drag-strip-track {
+  width: 100%;
+  background: #070707;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-5);
+  margin: var(--space-6) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.drag-lane {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lane-car-info {
+  width: 140px;
+  text-align: left;
+  font-family: var(--font-heading);
+  font-size: 0.825rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+
+.lane-track-strip {
+  flex: 1;
+  height: 20px;
+  background: #141414;
+  border-radius: var(--radius-xs);
+  position: relative;
+  overflow: hidden;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.lane-racer-bullet {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 16px;
+  background: var(--accent);
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4px;
+  font-size: 0.7rem;
+  color: #fff;
+  transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   8. RANKINGS PODIUM (Magazine Ranking Style, Subtle Metallic Accents)
+   -------------------------------------------------------------------------- */
+.podium-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-10);
+  padding-top: var(--space-4);
+}
+
+.podium-place {
+  flex: 1;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.podium-box {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform var(--transition-normal);
+}
+
+.podium-1 {
+  order: 2;
+}
+
+.podium-1 .podium-box {
+  border-color: rgba(212, 175, 55, 0.4);
+  background: #121212;
+  padding-top: var(--space-6);
+}
+
+.podium-2 {
+  order: 1;
+}
+
+.podium-2 .podium-box {
+  border-color: rgba(192, 192, 192, 0.3);
+}
+
+.podium-3 {
+  order: 3;
+}
+
+.podium-3 .podium-box {
+  border-color: rgba(205, 127, 50, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   9. MODAL SYSTEM
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  overflow-y: auto;
+}
+
+.modal-dialog {
+  background: #0E0E0E;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 880px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+  animation: modalFadeIn 0.22s ease-out;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 10;
+  transition: all var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   10. SITE FOOTER (4-Column Editorial Media Footer)
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background: #040404;
+  border-top: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-10);
+}
+
+.footer-hero-cta {
+  text-align: center;
+  margin-bottom: var(--space-12);
+  position: relative;
+  z-index: 2;
+}
+
+.footer-cta-title {
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.03em;
+}
+
+.footer-cta-title span {
+  color: var(--accent);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+  position: relative;
+  z-index: 2;
+}
+
+.footer-col h5 {
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+  text-transform: uppercase;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.footer-links a:hover {
+  color: var(--text-primary);
+}
+
+.footer-watermark {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-heading);
+  font-size: clamp(4rem, 15vw, 13rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: rgba(255, 255, 255, 0.015);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ==========================================================================
+   DAYTIME / LIGHT THEME ARCHITECTURAL COMPONENT OVERRIDES
+   ========================================================================== */
+[data-theme="light"] .navbar {
+  background: rgba(245, 245, 247, 0.88);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .nav-action-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #3D3D48;
+}
+
+[data-theme="light"] .nav-action-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #0A0A0E;
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="light"] .user-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #0A0A0E;
+}
+
+[data-theme="light"] .user-dropdown {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .dropdown-item {
+  color: #2E2E38;
+}
+
+[data-theme="light"] .dropdown-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #0A0A0E;
+}
+
+[data-theme="light"] .badge {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1A1A24;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .badge-amber {
+  background: rgba(255, 77, 0, 0.1);
+  color: #D63E00;
+  border-color: rgba(255, 77, 0, 0.25);
+}
+
+[data-theme="light"] .spec-item {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.07);
+}
+
+[data-theme="light"] .hero-badge-tag {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #1A1A22;
+}
+
+[data-theme="light"] .hero-telemetry-strip {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .telemetry-value {
+  color: #0A0A0E;
+}
+
+[data-theme="light"] .telemetry-item {
+  border-right-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .modal-overlay {
+  background: rgba(10, 10, 14, 0.5);
+}
+
+[data-theme="light"] .modal-container,
+[data-theme="light"] .modal-content,
+[data-theme="light"] .search-modal {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0A0A0E;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.14);
+}
+
+[data-theme="light"] .input-field,
+[data-theme="light"] .filter-select,
+[data-theme="light"] .search-input {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #0A0A0E;
+}
+
+[data-theme="light"] .footer-watermark {
+  color: rgba(0, 0, 0, 0.02);
+}

@@ -1,0 +1,130 @@
+/* ==========================================================================
+   DRIFTVERSE — Global Automotive Editorial Design System
+   Porsche / Ferrari / BMW M / Top Gear Inspired Visual Foundations
+   ========================================================================== */
+
+:root {
+  /* Typography Families */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-telemetry: 'Orbitron', 'JetBrains Mono', monospace;
+
+  /* Typography Scale */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 2rem;      /* 32px */
+  --text-4xl: 2.75rem;   /* 44px */
+  --text-5xl: 3.75rem;   /* 60px */
+  --text-6xl: 5rem;      /* 80px */
+
+  /* Spacing Scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Border Radii (Minimal, refined automotive precision: 2px - 8px) */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout Containers */
+  --container-max: 1360px;
+  --header-height: 76px;
+
+  /* Dark Theme (Default: High-End Cinematic Automotive Media) */
+  --bg-primary: #070707;
+  --bg-secondary: #0B0B0B;
+  --bg-tertiary: #111111;
+  --bg-surface: #161616;
+  --bg-card: rgba(13, 13, 16, 0.52);
+  --bg-card-hover: rgba(20, 20, 26, 0.75);
+  --bg-glass: rgba(11, 11, 11, 0.85);
+  --bg-input: rgba(18, 18, 22, 0.7);
+
+  --text-primary: #F5F5F5;
+  --text-secondary: #A5A5A5;
+  --text-muted: #6F6F6F;
+  --text-inverse: #070707;
+
+  /* Refined Automotive Accent (Strict 5-10% usage) */
+  --accent: #FF4D00;               /* Porsche Guards Red / BMW M Orange */
+  --accent-hover: #E64500;
+  --accent-secondary: #FF6A00;
+  --accent-gradient: linear-gradient(135deg, #FF4D00 0%, #FF6A00 100%);
+  --accent-subtle: rgba(255, 77, 0, 0.08);
+
+  /* Subtle Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-accent: rgba(255, 77, 0, 0.45);
+
+  /* High-end Subtle Shadows */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 44px rgba(0, 0, 0, 0.65);
+  --shadow-glow: 0 0 16px rgba(255, 77, 0, 0.2);
+
+  /* Editorial Badges */
+  --badge-bg: rgba(255, 255, 255, 0.06);
+  --badge-border: rgba(255, 255, 255, 0.12);
+  --badge-text: #D5D5D5;
+}
+
+/* Light Theme (Clean Showroom & Editorial Journal Style) */
+[data-theme="light"] {
+  --bg-primary: #F5F5F7;
+  --bg-secondary: #EBEBEF;
+  --bg-tertiary: #E1E1E6;
+  --bg-surface: #FFFFFF;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-card-hover: rgba(255, 255, 255, 0.94);
+  --bg-glass: rgba(245, 245, 247, 0.88);
+  --bg-input: #FFFFFF;
+
+  --text-primary: #0A0A0E;
+  --text-secondary: #3A3A44;
+  --text-muted: #6B6B75;
+  --text-inverse: #FFFFFF;
+
+  --accent: #FF4D00;
+  --accent-hover: #E64500;
+  --accent-secondary: #FF6A00;
+  --accent-gradient: linear-gradient(135deg, #FF4D00 0%, #FF6A00 100%);
+  --accent-subtle: rgba(255, 77, 0, 0.08);
+
+  --border-subtle: rgba(0, 0, 0, 0.09);
+  --border-medium: rgba(0, 0, 0, 0.18);
+  --border-accent: rgba(255, 77, 0, 0.5);
+
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.09);
+  --shadow-glow: 0 0 16px rgba(255, 77, 0, 0.12);
+
+  --badge-bg: rgba(0, 0, 0, 0.05);
+  --badge-border: rgba(0, 0, 0, 0.1);
+  --badge-text: #1A1A22;
+}

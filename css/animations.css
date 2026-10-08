@@ -1,0 +1,378 @@
+/* ==========================================================================
+   DRIFTVERSE — Restrained & Purposeful Automotive Animation System
+   Subtle Transitions, Fade, Slide, Modal Entrances & Accessibility
+   ========================================================================== */
+
+/* Clean Entrance Transitions */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes smoothSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes countdownPop {
+  0% { transform: scale(0.6); opacity: 0; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Reusable Utility Classes (Preserves functional JS hooks) */
+.anim-countdown {
+  animation: countdownPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-pulse-glow {
+  /* Restrained subtle opacity pulse */
+  opacity: 0.95;
+}
+
+.anim-flame {
+  /* Subtle static presence instead of jarring flicker */
+  transform: none;
+}
+
+.anim-engine-starting {
+  animation: smoothSpin 1.5s linear infinite;
+}
+
+/* Subtle image hover micro-interactions */
+.img-subtle-zoom {
+  transition: transform var(--transition-slow);
+}
+
+.img-subtle-zoom:hover {
+  transform: scale(1.03);
+}
+
+/* ==========================================================================
+   CINEMATIC SCROLL CANVAS SEQUENCE CONTAINER & TELEMETRY HUD
+   ========================================================================== */
+#scroll-canvas-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #070707;
+  transition: background-color var(--transition-normal);
+}
+
+#scroll-sequence-canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.94;
+  filter: contrast(108%) brightness(98%);
+  image-rendering: high-quality;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+/* Subtle, transparent cinematic vignette allowing canvas to shine through */
+.scroll-canvas-scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 65% 50%, rgba(7, 7, 7, 0) 0%, rgba(7, 7, 7, 0.3) 65%, rgba(7, 7, 7, 0.72) 100%),
+              linear-gradient(180deg, rgba(7, 7, 7, 0.25) 0%, transparent 20%, transparent 80%, rgba(7, 7, 7, 0.45) 100%);
+  pointer-events: none;
+  transition: background 0.4s ease;
+}
+
+/* Light Theme Canvas & Scrim Treatment */
+[data-theme="light"] #scroll-canvas-container {
+  background: #ECECF0;
+}
+
+[data-theme="light"] #scroll-sequence-canvas {
+  opacity: 0.42;
+  filter: contrast(120%) brightness(110%) saturate(90%);
+}
+
+[data-theme="light"] .scroll-canvas-scrim {
+  background: radial-gradient(circle at 65% 50%, rgba(245, 245, 247, 0.15) 0%, rgba(245, 245, 247, 0.6) 65%, #F5F5F7 100%),
+              linear-gradient(180deg, rgba(245, 245, 247, 0.4) 0%, transparent 20%, transparent 80%, rgba(245, 245, 247, 0.65) 100%);
+}
+
+/* Sleek Tactical Automotive Telemetry HUD */
+.scroll-telemetry-hud {
+  position: fixed;
+  bottom: 24px;
+  right: 28px;
+  z-index: 90;
+  pointer-events: auto;
+  background: rgba(11, 11, 14, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
+}
+
+.scroll-telemetry-hud:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+/* Light Theme Telemetry HUD */
+[data-theme="light"] .scroll-telemetry-hud {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #3D3D48;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .scroll-telemetry-hud:hover {
+  border-color: var(--accent);
+  color: #0A0A0E;
+}
+
+[data-theme="light"] .telemetry-scrub-bar {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.telemetry-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: telemetryPulse 1.8s infinite;
+}
+
+@keyframes telemetryPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+.telemetry-scrub-bar {
+  width: 64px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.telemetry-scrub-progress {
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.08s linear;
+}
+
+/* ==========================================================================
+   BIDIRECTIONAL SCROLL ANIMATIONS SYSTEM
+   (Reversible when scrolling back up!)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. SHATTERED REASSEMBLY ANIMATION (.scroll-shatter-section)
+   Elements start dispersed/rotated/blurred and snap together into precision form
+   -------------------------------------------------------------------------- */
+.scroll-shatter-section .shatter-fragment {
+  opacity: 0;
+  will-change: transform, opacity, filter;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease,
+              filter 0.4s ease;
+}
+
+/* Initial scattered states */
+.scroll-shatter-section .shatter-f1 {
+  transform: translate3d(-40px, -25px, 0) rotate(-3.5deg) scale(0.95);
+  filter: blur(8px);
+}
+
+.scroll-shatter-section .shatter-f2 {
+  transform: translate3d(45px, -20px, 0) rotate(3.5deg) scale(0.96);
+  filter: blur(8px);
+}
+
+.scroll-shatter-section .shatter-f3 {
+  transform: translate3d(-30px, 30px, 0) rotate(2.5deg) scale(1.04);
+  filter: blur(6px);
+}
+
+.scroll-shatter-section .shatter-f4 {
+  transform: translate3d(35px, 35px, 0) rotate(-3.5deg) scale(0.95);
+  filter: blur(8px);
+}
+
+/* In-View Assembled Precision State */
+.scroll-shatter-section.in-view .shatter-fragment {
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(1) !important;
+  opacity: 1 !important;
+  filter: blur(0px) !important;
+}
+
+/* Staggered assembly timing */
+.scroll-shatter-section.in-view .shatter-f1 { transition-delay: 0.02s; }
+.scroll-shatter-section.in-view .shatter-f2 { transition-delay: 0.06s; }
+.scroll-shatter-section.in-view .shatter-f3 { transition-delay: 0.10s; }
+.scroll-shatter-section.in-view .shatter-f4 { transition-delay: 0.14s; }
+
+/* Reversible when scrolling back up */
+.scroll-shatter-section:not(.in-view) .shatter-fragment {
+  transition-duration: 0.35s;
+  transition-delay: 0s;
+}
+
+/* --------------------------------------------------------------------------
+   2. TWO-SIDED CONVERGENCE ANIMATION (.scroll-split-section)
+   Elements slide smoothly inwards from opposite edges and meet seamlessly
+   -------------------------------------------------------------------------- */
+.scroll-split-section .split-left {
+  opacity: 0;
+  transform: translate3d(-70px, 0, 0) scale(0.97);
+  will-change: transform, opacity;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
+}
+
+.scroll-split-section .split-right {
+  opacity: 0;
+  transform: translate3d(70px, 0, 0) scale(0.97);
+  will-change: transform, opacity;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
+}
+
+.scroll-split-section .split-header {
+  opacity: 0;
+  transform: translate3d(0, -25px, 0);
+  will-change: transform, opacity;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.35s ease;
+}
+
+/* In-View Converged State */
+.scroll-split-section.in-view .split-left,
+.scroll-split-section.in-view .split-right,
+.scroll-split-section.in-view .split-header {
+  transform: translate3d(0, 0, 0) scale(1) !important;
+  opacity: 1 !important;
+}
+
+.scroll-split-section.in-view .split-header { transition-delay: 0.02s; }
+.scroll-split-section.in-view .split-left:nth-child(1) { transition-delay: 0.05s; }
+.scroll-split-section.in-view .split-left:nth-child(2) { transition-delay: 0.10s; }
+.scroll-split-section.in-view .split-right:nth-child(1) { transition-delay: 0.05s; }
+.scroll-split-section.in-view .split-right:nth-child(2) { transition-delay: 0.10s; }
+
+/* Reversible when scrolling back up */
+.scroll-split-section:not(.in-view) .split-left,
+.scroll-split-section:not(.in-view) .split-right,
+.scroll-split-section:not(.in-view) .split-header {
+  transition-duration: 0.35s;
+  transition-delay: 0s;
+}
+
+/* --------------------------------------------------------------------------
+   3. DEPTH-OF-FIELD PROGRESSIVE UNBLUR ANIMATION (.scroll-blur-section)
+   Elements start deep in cinematic bokeh blur and snap into crisp clarity
+   -------------------------------------------------------------------------- */
+.scroll-blur-section .blur-item {
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(0.95) translate3d(0, 30px, 0);
+  will-change: filter, transform, opacity;
+  transition: filter 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
+}
+
+.scroll-blur-section .blur-header {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translate3d(0, -18px, 0);
+  will-change: filter, transform, opacity;
+  transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.35s ease;
+}
+
+/* In-View Razor-Sharp Focus State */
+.scroll-blur-section.in-view .blur-item {
+  filter: blur(0px) !important;
+  opacity: 1 !important;
+  transform: scale(1) translate3d(0, 0, 0) !important;
+}
+
+.scroll-blur-section.in-view .blur-header {
+  filter: blur(0px) !important;
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+/* Progressive Stagger Delays */
+.scroll-blur-section.in-view .blur-header { transition-delay: 0.02s; }
+.scroll-blur-section.in-view .blur-item:nth-child(1) { transition-delay: 0.04s; }
+.scroll-blur-section.in-view .blur-item:nth-child(2) { transition-delay: 0.08s; }
+.scroll-blur-section.in-view .blur-item:nth-child(3) { transition-delay: 0.12s; }
+.scroll-blur-section.in-view .blur-item:nth-child(4) { transition-delay: 0.16s; }
+.scroll-blur-section.in-view .blur-item:nth-child(5) { transition-delay: 0.20s; }
+.scroll-blur-section.in-view .blur-item:nth-child(6) { transition-delay: 0.24s; }
+
+/* Reversible when scrolling back up: blurs back out smoothly */
+.scroll-blur-section:not(.in-view) .blur-item,
+.scroll-blur-section:not(.in-view) .blur-header {
+  transition-duration: 0.35s;
+  transition-delay: 0s;
+}
+
+/* ==========================================================================
+   ACCESSIBILITY: REDUCED MOTION PREFERENCE
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .car-card-img,
+  .video-card-img,
+  .play-circle,
+  .btn,
+  .car-card,
+  .video-card {
+    transition: none !important;
+    transform: none !important;
+  }
+}

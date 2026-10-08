@@ -1,0 +1,286 @@
+/* ==========================================================================
+   DRIFTVERSE — Responsive Design & Breakpoint Engineering
+   Clean Mobile Drawer, Stacked Comparison, Touch Targets & Zero Overflow
+   ========================================================================== */
+
+/* Mobile Menu Toggle Button (Hidden on Desktop) */
+.mobile-menu-toggle {
+  display: none;
+}
+
+/* Mobile Slide-out Drawer */
+.mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.mobile-drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 290px;
+  height: 100%;
+  background: #0B0B0B;
+  border-left: 1px solid var(--border-medium);
+  z-index: 10001;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: right var(--transition-normal);
+  overflow-y: auto;
+}
+
+.mobile-drawer-overlay.open .mobile-drawer {
+  right: 0;
+}
+
+.mobile-drawer .nav-link {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  display: block;
+  min-height: 44px;
+}
+
+/* Mobile Bottom Navigation: Cleanly disabled/hidden by default to avoid visual clutter as requested in §19 */
+.mobile-bottom-nav {
+  display: none !important;
+}
+
+/* ==========================================================================
+   LAPTOP BREAKPOINT (max-width: 1200px)
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .hero-telemetry-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+}
+
+/* ==========================================================================
+   TABLET BREAKPOINT (max-width: 1024px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .nav-links {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .section-wrapper {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+  }
+
+  .hero-section {
+    min-height: 75vh;
+  }
+
+  .compare-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==========================================================================
+   MOBILE BREAKPOINT (max-width: 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 68px;
+  }
+
+  .container {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .section-wrapper {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+  }
+
+  /* Section Headings */
+  h1 {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+  }
+
+  /* Mobile Hero */
+  .hero-section {
+    min-height: auto;
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-10);
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(7, 7, 7, 0.4) 0%,
+      rgba(7, 7, 7, 0.85) 60%,
+      #070707 100%
+    );
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .hero-cta-group .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .hero-telemetry-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .telemetry-value {
+    font-size: 1.2rem;
+  }
+
+  /* Responsive Grids -> Single Column */
+  .compare-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Force all large content grids into 1 column to avoid mobile overflow (320px - 768px) */
+  div[style*="minmax(280px"],
+  div[style*="minmax(300px"],
+  div[style*="minmax(320px"],
+  div[style*="minmax(340px"],
+  div[style*="minmax(380px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobile Podium: Stacked Magazine Style */
+  .podium-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  .podium-place {
+    max-width: 100%;
+  }
+
+  .podium-1 { order: 1; }
+  .podium-2 { order: 2; }
+  .podium-3 { order: 3; }
+
+  /* Mobile Comparison Table: Stacked Cards / Scroll */
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  /* Footer Grid -> 1 Column */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .footer-watermark {
+    display: none;
+  }
+
+  /* Touch Friendly Controls */
+  .nav-action-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .car-action-icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .car-rev-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
+
+  /* Lane Shootout on Mobile */
+  .lane-car-info {
+    width: 95px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   SMALL MOBILE BREAKPOINT (max-width: 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .hero-telemetry-strip {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .car-specs-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 0.5rem;
+  }
+
+  .spec-val {
+    font-size: 0.85rem;
+  }
+
+  .spec-lbl {
+    font-size: 0.6rem;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-wrap {
+    min-width: 100%;
+  }
+
+  .filter-pills {
+    width: 100%;
+  }
+
+  .filter-pill {
+    flex: 1;
+    text-align: center;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
