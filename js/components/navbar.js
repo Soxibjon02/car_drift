@@ -34,7 +34,7 @@ export function renderNavbar(container, activeRoute = "home") {
           <li><a class="nav-link ${activeRoute === "rankings" ? "active" : ""}" data-route="rankings">Rankings</a></li>
           <li><a class="nav-link ${activeRoute === "trending" ? "active" : ""}" data-route="trending">Trending</a></li>
           <li><a class="nav-link ${activeRoute === "garage" ? "active" : ""}" data-route="garage">Garage</a></li>
-          ${authService.isAdmin() ? `<li><a class="nav-link ${activeRoute === "admin" ? "active" : ""}" data-route="admin" style="color:var(--accent);">Control Center</a></li>` : ""}
+          <li><a class="nav-link ${activeRoute === "admin" ? "active" : ""}" data-route="admin" style="${authService.isAdmin() ? 'color:var(--accent); font-weight:700;' : 'color:var(--text-muted);'}">Admin</a></li>
         </ul>
 
         <!-- Action Buttons -->
@@ -65,28 +65,24 @@ export function renderNavbar(container, activeRoute = "home") {
               user
                 ? `
               <div class="user-btn" id="btn-user-dropdown-toggle">
-                <img src="${user.avatar}" class="user-avatar" alt="${user.name}" />
-                <span class="user-name">${user.name}</span>
+                <img src="${user.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(user.username || user.name || 'driver')}" class="user-avatar" alt="${user.username || user.name}" />
+                <span class="user-name">${user.username || user.name}</span>
                 <span style="font-size:0.65rem; color:var(--text-muted);">▼</span>
               </div>
               <div class="user-dropdown" id="user-dropdown-menu">
                 <div class="dropdown-header">
-                  <div style="font-weight:600; font-size:0.825rem; color:var(--text-primary);">${user.name}</div>
-                  <div class="dropdown-user-role">${user.driverBadge || user.role}</div>
+                  <div style="font-weight:600; font-size:0.825rem; color:var(--text-primary);">${user.username || user.name}</div>
+                  <div class="dropdown-user-role" style="font-size:0.7rem; color:var(--accent); text-transform:uppercase;">${user.role || 'Pilot'}</div>
                 </div>
-                <div class="dropdown-item" data-route="garage">My Garage (${user.garageCars?.length || 0})</div>
-                <div class="dropdown-item" data-route="admin">Control Center ${user.role === 'Admin' ? '<span class="badge" style="font-size:9px;">ADMIN</span>' : ''}</div>
+                <div class="dropdown-item" data-route="garage">Mening Garajim (${user.garageCars?.length || 0})</div>
+                <div class="dropdown-item" data-route="admin">Admin Panel ${authService.isAdmin() ? '<span class="badge" style="font-size:9px; background:var(--accent); color:#fff;">ADMIN</span>' : '🔒'}</div>
                 <div style="border-top:1px solid var(--border-subtle); margin:4px 0;"></div>
-                <div class="dropdown-header" style="font-size:0.68rem; color:var(--text-muted); text-transform:uppercase;">Role Switcher:</div>
-                <div class="dropdown-item" id="demo-switch-admin" style="font-size:0.75rem;">Switch to Admin</div>
-                <div class="dropdown-item" id="demo-switch-user" style="font-size:0.75rem;">Switch to Pro Driver</div>
-                <div style="border-top:1px solid var(--border-subtle); margin:4px 0;"></div>
-                <div class="dropdown-item" id="btn-user-logout" style="color:var(--accent);">Logout</div>
+                <div class="dropdown-item" id="btn-user-logout" style="color:#FF453A;">Chiqish (Logout)</div>
               </div>
             `
                 : `
               <button class="btn btn-primary btn-sm" id="btn-auth-login">
-                Sign In
+                Kirish / Ro'yxat
               </button>
             `
             }

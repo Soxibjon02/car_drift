@@ -2,3 +2,7 @@ node_modules/
 .DS_Store
 *.log
 test_cards_and_light_theme.js
+test_neon_db.js
+test_youtube_neon_admin.js
+update_video_ids.js
+.env

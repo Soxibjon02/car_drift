@@ -3,6 +3,7 @@
  * POWER. SPEED. CONTROL.
  */
 import { store } from "./services/store.js";
+import { api } from "./services/api.js";
 import { renderNavbar } from "./components/navbar.js";
 import { renderFooter } from "./components/footer.js";
 import { SearchModal } from "./components/searchModal.js";
@@ -75,6 +76,29 @@ class DriftverseApp {
     store.subscribe(() => {
       this.updateNavbar();
     });
+
+    // 8. Sync live Videos and Auth with Neon PostgreSQL Backend
+    api.getVideos().then((freshVideos) => {
+      if (freshVideos && freshVideos.length > 0) {
+        store.videos = freshVideos.map((fv) => ({
+          ...fv,
+          id: fv.id,
+          youtube_id: fv.youtube_id,
+          likes: fv.likes_count || fv.likes || 0,
+          uploadDate: fv.created_at ? fv.created_at.split("T")[0] : "2024-09-15",
+          isTrending: true,
+          isFeatured: true
+        }));
+        store.notify();
+      }
+    }).catch(() => {});
+
+    api.getCurrentUser().then((currentUser) => {
+      if (currentUser) {
+        store.setCurrentUser(currentUser);
+        this.updateNavbar();
+      }
+    }).catch(() => {});
   }
 
   registerEventListeners() {
@@ -82,6 +106,14 @@ class DriftverseApp {
     window.addEventListener("driftverse:navigate", (e) => {
       const route = e.detail?.route || "home";
       this.navigateTo(route);
+    });
+
+    // Auth Changed Event
+    window.addEventListener("driftverse:auth-changed", () => {
+      this.updateNavbar();
+      if (this.currentRoute === "admin" || this.currentRoute === "garage") {
+        this.render();
+      }
     });
 
     // Hash change event (back/forward browser buttons)
