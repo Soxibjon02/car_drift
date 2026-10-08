@@ -6,7 +6,7 @@ DRIFTVERSE is a high-end, editorial automotive platform inspired by the design a
 
 ## ⚡ Key Features
 
-* **Scroll-Synchronized Cinematic Sequence:** 282-frame high-resolution drift motion rendered in real time onto an optimized HTML5 Canvas with Hi-DPI scaling.
+* **Scroll-Synchronized Cinematic Sequence:** 90-frame high-resolution drift motion rendered in real time onto an optimized HTML5 Canvas with Hi-DPI scaling.
 * **Translucent Frosted Glass Architecture:** Semi-transparent cards with real-time blur and depth (`backdrop-filter`) allowing background motion to shine through with extreme sharpness.
 * **Dual Theme Engine (Dark & Showroom Daytime):** Seamless one-click transition between stealth matte carbon dark mode and ultra-clean editorial white daytime mode.
 * **Dynamic Automotive Telemetry:**

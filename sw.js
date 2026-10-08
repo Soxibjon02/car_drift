@@ -3,7 +3,7 @@
  * High-speed caching & standalone offline engine
  */
 
-const CACHE_NAME = "driftverse-cache-v1";
+const CACHE_NAME = "driftverse-cache-v2";
 const STATIC_ASSETS = [
   "/",
   "/index.html",

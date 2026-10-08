@@ -1,12 +1,12 @@
 /**
  * DRIFTVERSE - Cinematic Scroll Image Sequence Engine
- * Controls 282 high-fps automotive drift frames synced with scroll position
+ * Controls 90 high-fps automotive drift frames synced with scroll position
  * Inspired by Porsche / Apple product experience architecture
  */
 
 export class ScrollSequenceEngine {
   constructor() {
-    this.totalFrames = 282;
+    this.totalFrames = 90;
     this.images = new Array(this.totalFrames);
     this.loadedCount = 0;
     this.currentFrameIndex = 0;
@@ -25,7 +25,7 @@ export class ScrollSequenceEngine {
     this.hudProgressBar = null;
 
     // Concurrency limit for background image preloading
-    this.preloadBatchSize = 8;
+    this.preloadBatchSize = 10;
   }
 
   init() {
@@ -36,7 +36,7 @@ export class ScrollSequenceEngine {
     this.bindEvents();
 
     // 1. Preload the first critical frames immediately for instant visual
-    this.preloadInitialFrames(24).then(() => {
+    this.preloadInitialFrames(15).then(() => {
       this.drawFrame(0);
       // 2. Lazily queue remaining frames without stalling the main thread
       this.startBackgroundPreload();
@@ -58,7 +58,7 @@ export class ScrollSequenceEngine {
         <div class="scroll-telemetry-hud" id="scroll-telemetry-hud" title="Scroll-driven Drift Telemetry">
           <div class="telemetry-pulse-dot"></div>
           <div>DRIFT TELEMETRY</div>
-          <div style="color:var(--text-primary);"><span id="hud-frame-val">001</span>/282</div>
+          <div style="color:var(--text-primary);"><span id="hud-frame-val">001</span>/090</div>
           <div style="color:var(--accent);"><span id="hud-angle-val">0</span>° ANGLE</div>
           <div class="telemetry-scrub-bar">
             <div class="telemetry-scrub-progress" id="hud-scrub-progress"></div>
@@ -81,7 +81,7 @@ export class ScrollSequenceEngine {
 
   getFrameUrl(index) {
     const frameNum = String(index + 1).padStart(3, "0");
-    return `animation images/ezgif-frame-${frameNum}.jpg`;
+    return `animation images/ezgif-frame-${frameNum}.png`;
   }
 
   preloadImage(index) {
@@ -114,7 +114,7 @@ export class ScrollSequenceEngine {
   }
 
   startBackgroundPreload() {
-    let nextIndex = 24;
+    let nextIndex = 15;
 
     const loadNextBatch = () => {
       if (nextIndex >= this.totalFrames) return;
