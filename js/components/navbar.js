@@ -265,4 +265,22 @@ function attachNavbarEvents(container) {
       drawerSoundBtn.textContent = active ? "🔊 Ovoz: ON" : "🔇 Ovoz: OFF";
     });
   }
+
+  // Dynamic navbar scroll appearance
+  const syncNavbarScroll = () => {
+    const nav = document.getElementById("app-navbar");
+    if (nav) {
+      if (window.scrollY > 20) {
+        nav.classList.add("scrolled");
+      } else {
+        nav.classList.remove("scrolled");
+      }
+    }
+  };
+
+  if (!window._driftverseNavbarScrollAttached) {
+    window._driftverseNavbarScrollAttached = true;
+    window.addEventListener("scroll", syncNavbarScroll, { passive: true });
+  }
+  syncNavbarScroll();
 }

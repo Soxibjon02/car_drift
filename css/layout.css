@@ -5,9 +5,11 @@
 
 /* Mount Containers Stacking & Positioning */
 #navbar-mount {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   width: 100%;
   max-width: 100%;
 }
@@ -19,6 +21,7 @@
   width: 100%;
   max-width: 100%;
   overflow-x: clip;
+  padding-top: var(--header-height);
 }
 
 #footer-mount {
