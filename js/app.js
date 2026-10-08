@@ -90,7 +90,13 @@ class DriftverseApp {
           isTrending: true,
           isFeatured: true
         }));
+        try {
+          localStorage.setItem("driftverse_videos_v1", JSON.stringify(store.videos));
+        } catch {}
         store.notify();
+        if (this.currentRoute === "home" || this.currentRoute === "videos" || this.currentRoute === "trending") {
+          this.renderCurrentPage();
+        }
       }
     }).catch(() => {});
 

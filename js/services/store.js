@@ -213,7 +213,8 @@ class Store {
   }
 
   getVideoById(id) {
-    return this.videos.find((v) => v.id === id);
+    if (!id) return null;
+    return this.videos.find((v) => v.id == id || String(v.id) === String(id) || v.youtube_id === id);
   }
 
   addVideo(videoData) {

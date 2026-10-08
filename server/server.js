@@ -21,6 +21,20 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "driftadmin2026";
 app.use(cors());
 app.use(express.json());
 
+// Lazy DB init for Vercel Serverless Functions and container startups
+let dbInitPromise = null;
+app.use(async (req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    if (!dbInitPromise) {
+      dbInitPromise = initDb().catch((err) => {
+        console.error("Database lazy init error:", err);
+      });
+    }
+    await dbInitPromise;
+  }
+  next();
+});
+
 // Helper: Extract YouTube ID from URL or raw ID
 function extractYouTubeId(urlOrId) {
   if (!urlOrId) return null;
@@ -271,7 +285,9 @@ app.get("/api/videos", optionalAuth, async (req, res) => {
 // Get Single Video with Comments & Details
 app.get("/api/videos/:id", optionalAuth, async (req, res) => {
   try {
-    const videoId = parseInt(req.params.id);
+    const rawId = req.params.id;
+    const isNum = !isNaN(parseInt(rawId)) && /^\d+$/.test(rawId);
+    const videoId = isNum ? parseInt(rawId) : 0;
     const userId = req.user ? req.user.id : null;
 
     const videoQuery = `
@@ -285,14 +301,15 @@ app.get("/api/videos/:id", optionalAuth, async (req, res) => {
         END AS is_liked
       FROM videos v
       LEFT JOIN video_likes vl ON vl.video_id = v.id
-      WHERE v.id = $1
+      WHERE (v.id = $1 OR v.youtube_id = $3)
       GROUP BY v.id;
     `;
-    const videoRes = await pool.query(videoQuery, [videoId, userId]);
+    const videoRes = await pool.query(videoQuery, [videoId, userId, rawId]);
     if (videoRes.rows.length === 0) {
       return res.status(404).json({ error: "Video topilmadi!" });
     }
 
+    const foundVideo = videoRes.rows[0];
     const commentsQuery = `
       SELECT 
         c.id, c.video_id, c.user_id, c.user_name, c.user_avatar, c.content, c.created_at,
@@ -302,10 +319,10 @@ app.get("/api/videos/:id", optionalAuth, async (req, res) => {
       WHERE c.video_id = $1
       ORDER BY c.created_at DESC;
     `;
-    const commentsRes = await pool.query(commentsQuery, [videoId]);
+    const commentsRes = await pool.query(commentsQuery, [foundVideo.id]);
 
     res.json({
-      video: videoRes.rows[0],
+      video: foundVideo,
       comments: commentsRes.rows
     });
   } catch (err) {
@@ -507,19 +524,6 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-// Lazy DB init for Vercel Serverless Functions
-let dbInitPromise = null;
-app.use(async (req, res, next) => {
-  if (req.path.startsWith("/api/")) {
-    if (!dbInitPromise) {
-      dbInitPromise = initDb().catch((err) => {
-        console.error("Vercel Serverless DB init error:", err);
-      });
-    }
-    await dbInitPromise;
-  }
-  next();
-});
 
 // --------------------------------------------------------------------------
 // STATIC FILES & SPA FALLBACK

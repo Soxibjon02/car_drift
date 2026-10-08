@@ -58,7 +58,13 @@ export class VideoPlayerModal {
 
     try {
       // Fetch fresh video and comments from Neon PostgreSQL
-      const data = await api.getVideoById(videoId).catch(() => null);
+      let data = null;
+      try {
+        data = await api.getVideoById(videoId);
+      } catch (err) {
+        // Gracefully catch 404 and fallback to client store
+      }
+
       if (data && data.video) {
         this.currentVideo = data.video;
         this.comments = data.comments || [];
@@ -66,22 +72,33 @@ export class VideoPlayerModal {
         this.isLiked = data.video.is_liked || false;
       } else {
         // Fallback to store
-        const fallback = store.getVideoById(videoId);
+        let fallback = store.getVideoById(videoId);
         if (!fallback) {
+          // If specific ID from old cache is missing, fallback to first available video
+          const allVids = store.getVideos();
+          fallback = allVids.length > 0 ? allVids[0] : null;
+        }
+        if (!fallback) {
+          window.dispatchEvent(new CustomEvent("driftverse:toast", {
+            detail: { message: "Video topilmadi yoki o'chirilgan" }
+          }));
           this.close();
           return;
         }
         this.currentVideo = fallback;
-        this.comments = store.getVideoComments ? store.getVideoComments(videoId) : [];
+        this.comments = store.getVideoComments ? store.getVideoComments(fallback.id) : [];
         this.likesCount = fallback.likes || 0;
-        this.isLiked = store.isVideoLiked ? store.isVideoLiked(videoId) : false;
+        this.isLiked = store.isVideoLiked ? store.isVideoLiked(fallback.id) : false;
       }
 
       this.render();
       this.initYouTubePlayer();
-      api.recordView(this.currentVideo.id);
+      if (this.currentVideo && this.currentVideo.id) {
+        api.recordView(this.currentVideo.id);
+      }
     } catch (err) {
       console.error("Failed to load video data:", err);
+      this.close();
     }
   }
 
