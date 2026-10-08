@@ -33,8 +33,8 @@ export function renderNavbar(container, activeRoute = "home") {
           </li>
           <li><a class="nav-link ${activeRoute === "rankings" ? "active" : ""}" data-route="rankings">Rankings</a></li>
           <li><a class="nav-link ${activeRoute === "trending" ? "active" : ""}" data-route="trending">Trending</a></li>
+          <li><a class="nav-link ${activeRoute === "wallpapers" ? "active" : ""}" data-route="wallpapers">Wallpapers</a></li>
           <li><a class="nav-link ${activeRoute === "garage" ? "active" : ""}" data-route="garage">Garage</a></li>
-          <li><a class="nav-link ${activeRoute === "admin" ? "active" : ""}" data-route="admin" style="${authService.isAdmin() ? 'color:var(--accent); font-weight:700;' : 'color:var(--text-muted);'}">Admin</a></li>
         </ul>
 
         <!-- Action Buttons -->
@@ -80,7 +80,6 @@ export function renderNavbar(container, activeRoute = "home") {
                   <div class="dropdown-user-role" style="font-size:0.7rem; color:var(--accent); text-transform:uppercase;">${user.role || 'Pilot'}</div>
                 </div>
                 <div class="dropdown-item" data-route="garage">Mening Garajim (${user.garageCars?.length || 0})</div>
-                <div class="dropdown-item" data-route="admin">Admin Panel ${authService.isAdmin() ? '<span class="badge" style="font-size:9px; background:var(--accent); color:#fff;">ADMIN</span>' : '🔒'}</div>
                 <div style="border-top:1px solid var(--border-subtle); margin:4px 0;"></div>
                 <div class="dropdown-item" id="btn-user-logout" style="color:#FF453A;">Chiqish (Logout)</div>
               </div>
@@ -121,8 +120,8 @@ export function renderNavbar(container, activeRoute = "home") {
         <a class="nav-link ${activeRoute === "compare" ? "active" : ""}" data-route="compare">Compare</a>
         <a class="nav-link ${activeRoute === "rankings" ? "active" : ""}" data-route="rankings">Rankings</a>
         <a class="nav-link ${activeRoute === "trending" ? "active" : ""}" data-route="trending">Trending</a>
+        <a class="nav-link ${activeRoute === "wallpapers" ? "active" : ""}" data-route="wallpapers">Wallpapers</a>
         <a class="nav-link ${activeRoute === "garage" ? "active" : ""}" data-route="garage">My Garage</a>
-        <a class="nav-link ${activeRoute === "admin" ? "active" : ""}" data-route="admin" style="color:var(--accent);">Admin Panel ${authService.isAdmin() ? '' : '🔒'}</a>
       </div>
     </div>
   `;

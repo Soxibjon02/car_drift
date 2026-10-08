@@ -337,8 +337,14 @@ export function renderCarsPage(container, initialBrand = "All") {
     container.querySelectorAll(".btn-card-rev").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
-        const soundType = btn.getAttribute("data-sound");
-        soundEngine.playRev(soundType);
+        const carId = btn.getAttribute("data-car-id");
+        const car = carId ? store.getCarById(carId) : null;
+        if (car) {
+          soundEngine.playCarAudio(car);
+        } else {
+          const soundType = btn.getAttribute("data-sound");
+          soundEngine.playRev(soundType);
+        }
       });
     });
 

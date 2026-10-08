@@ -206,3 +206,39 @@
 .search-suggestion {
   font-size: 0.75rem;
 }
+
+/* --------------------------------------------------------------------------
+   7. DEDICATED CINEMATIC WATCH PAGE
+   -------------------------------------------------------------------------- */
+.watch-page-wrapper {
+  animation: fadeIn 0.35s ease;
+}
+
+.watch-player-card {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+  border: 1px solid var(--border-medium);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.watch-player-card:hover {
+  border-color: rgba(255, 77, 0, 0.4);
+  box-shadow: 0 24px 60px rgba(255, 77, 0, 0.12);
+}
+
+.related-video-card {
+  transition: all var(--transition-fast);
+}
+
+.related-video-card:hover {
+  border-color: var(--accent) !important;
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.watch-comment-card {
+  transition: border-color var(--transition-fast);
+}
+
+.watch-comment-card:hover {
+  border-color: var(--border-medium);
+}

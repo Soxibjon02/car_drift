@@ -8,3 +8,4 @@ update_video_ids.js
 generate_icons.js
 test_mobile_and_pwa.js
 .env
+scratch/

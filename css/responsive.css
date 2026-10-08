@@ -18,19 +18,26 @@
   z-index: 10000;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.mobile-drawer-overlay:not(.open) .mobile-drawer {
+  display: none !important;
 }
 
 .mobile-drawer-overlay.open {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .mobile-drawer {
   position: fixed;
   top: 0;
-  right: -320px;
-  width: 290px;
+  right: 0;
+  transform: translateX(100%);
+  width: min(290px, 85vw);
   height: 100%;
   background: #0B0B0B;
   border-left: 1px solid var(--border-medium);
@@ -39,12 +46,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  transition: right var(--transition-normal);
+  transition: transform var(--transition-normal), visibility var(--transition-normal);
   overflow-y: auto;
+  visibility: hidden;
 }
 
 .mobile-drawer-overlay.open .mobile-drawer {
-  right: 0;
+  transform: translateX(0);
+  visibility: visible;
 }
 
 .mobile-drawer .nav-link {
@@ -354,15 +363,64 @@
   }
 
   .filter-pills {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    gap: 8px;
+    scrollbar-width: none;
     width: 100%;
   }
 
+  .filter-pills::-webkit-scrollbar {
+    display: none;
+  }
+
   .filter-pill {
-    flex: 1;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-height: 38px;
+    padding: 0.4rem 0.9rem;
     text-align: center;
-    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
+  /* Dedicated Watch Page Mobile Viewport Tuning */
+  .watch-player-card {
+    border-radius: var(--radius-xs) !important;
+    margin-bottom: 16px !important;
+  }
+
+  .watch-video-title {
+    font-size: 1.35rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .watch-stats-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  .watch-actions-bar {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .watch-actions-bar .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .watch-top-nav {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
 }
+

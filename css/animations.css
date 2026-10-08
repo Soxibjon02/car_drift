@@ -376,3 +376,21 @@
     transform: none !important;
   }
 }
+
+/* ==========================================================================
+   MOBILE ANIMATION ADJUSTMENTS (Zero Horizontal Overflow)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .scroll-split-section .split-left,
+  .scroll-split-section .split-right {
+    transform: translate3d(0, 20px, 0) scale(0.98);
+  }
+
+  .scroll-shatter-section .shatter-f1,
+  .scroll-shatter-section .shatter-f2,
+  .scroll-shatter-section .shatter-f3,
+  .scroll-shatter-section .shatter-f4 {
+    transform: translate3d(0, 16px, 0) scale(0.98);
+    filter: none;
+  }
+}

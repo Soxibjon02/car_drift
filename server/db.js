@@ -163,41 +163,177 @@ export async function initDb() {
       );
     `);
 
+    // 6. Images & Wallpapers Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS images (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        url TEXT NOT NULL,
+        device_type VARCHAR(20) DEFAULT 'desktop',
+        sections TEXT[] DEFAULT ARRAY['wallpapers'],
+        category VARCHAR(50) DEFAULT 'Supercars',
+        car_id VARCHAR(50),
+        resolution VARCHAR(30) DEFAULT '4K Ultra HD',
+        views INT DEFAULT 0,
+        downloads INT DEFAULT 0,
+        likes INT DEFAULT 0,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // 7. System Settings Table (to track initial seed status)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS system_settings (
+        key VARCHAR(50) PRIMARY KEY,
+        value TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     await client.query("COMMIT");
     console.log("All tables verified in Neon PostgreSQL.");
 
-    // Seed default admin if not exists
-    const adminCheck = await client.query("SELECT id FROM users WHERE username = 'admin' OR role = 'admin' LIMIT 1;");
-    if (adminCheck.rows.length === 0) {
-      const adminPass = process.env.ADMIN_PASSWORD || "driftadmin2026";
-      const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(adminPass, salt);
+    // STRICT ADMIN LOCK: Only soxibgaybullayev439@gmail.com with s0x1bj0n$02$
+    const targetAdminEmail = process.env.ADMIN_EMAIL || "soxibgaybullayev439@gmail.com";
+    const targetAdminPass = process.env.ADMIN_PASSWORD || "s0x1bj0n$02$";
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(targetAdminPass, salt);
+
+    // Demote any old legacy admin accounts
+    await client.query("UPDATE users SET role = 'user' WHERE email != $1 AND role = 'admin';", [targetAdminEmail]);
+
+    // Ensure the specific admin account exists with this exact email & password
+    const adminUser = await client.query("SELECT id FROM users WHERE email = $1 LIMIT 1;", [targetAdminEmail]);
+    if (adminUser.rows.length === 0) {
       await client.query(
         `INSERT INTO users (username, email, password_hash, role, avatar)
-         VALUES ($1, $2, $3, $4, $5);`,
+         VALUES ($1, $2, $3, 'admin', $4);`,
         [
-          "admin",
-          "admin@driftverse.io",
+          "soxibjon",
+          targetAdminEmail,
           hash,
-          "admin",
           "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
         ]
       );
-      console.log(`Default admin created: admin / ${adminPass}`);
+      console.log(`Dedicated secure admin created: ${targetAdminEmail}`);
+    } else {
+      await client.query(
+        "UPDATE users SET role = 'admin', password_hash = $1 WHERE email = $2;",
+        [hash, targetAdminEmail]
+      );
+      console.log(`Dedicated secure admin credentials synced: ${targetAdminEmail}`);
     }
 
-    // Seed initial videos if empty
-    const videoCount = await client.query("SELECT COUNT(*) FROM videos;");
-    if (parseInt(videoCount.rows[0].count) === 0) {
-      console.log("Seeding initial high-octane YouTube videos...");
-      for (const v of initialSeedVideos) {
-        await client.query(
-          `INSERT INTO videos (youtube_id, youtube_url, title, category, description, duration, duration_sec, thumbnail, channel_name, views)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`,
-          [v.youtube_id, v.youtube_url, v.title, v.category, v.description, v.duration, v.duration_sec, v.thumbnail, v.channel_name, v.views]
-        );
+    // Seed initial videos ONLY once on first-time setup; NEVER re-seed if videos are deleted!
+    const seedFlag = await client.query("SELECT value FROM system_settings WHERE key = 'videos_seeded' LIMIT 1;");
+    if (seedFlag.rows.length === 0) {
+      const videoCount = await client.query("SELECT COUNT(*) FROM videos;");
+      if (parseInt(videoCount.rows[0].count) === 0) {
+        console.log("Seeding initial high-octane YouTube videos (first time setup only)...");
+        for (const v of initialSeedVideos) {
+          await client.query(
+            `INSERT INTO videos (youtube_id, youtube_url, title, category, description, duration, duration_sec, thumbnail, channel_name, views)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`,
+            [v.youtube_id, v.youtube_url, v.title, v.category, v.description, v.duration, v.duration_sec, v.thumbnail, v.channel_name, v.views]
+          );
+        }
+        console.log("Seeded initial videos into Neon DB.");
       }
-      console.log("Seeded initial videos into Neon DB.");
+      await client.query("INSERT INTO system_settings (key, value) VALUES ('videos_seeded', 'true') ON CONFLICT (key) DO NOTHING;");
+    }
+
+    // Seed initial wallpapers ONLY once on first-time setup; NEVER re-seed if deleted!
+    const wallSeedFlag = await client.query("SELECT value FROM system_settings WHERE key = 'wallpapers_seeded' LIMIT 1;");
+    if (wallSeedFlag.rows.length === 0) {
+      const wallCount = await client.query("SELECT COUNT(*) FROM images;");
+      if (parseInt(wallCount.rows[0].count) === 0) {
+        console.log("Seeding initial high-res automotive wallpapers (first time setup only)...");
+        const seedWallpapers = [
+          {
+            title: "BMW M4 Competition // Midnight Tokyo Drift",
+            url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=2560&q=90",
+            device_type: "desktop",
+            sections: ["wallpapers", "cars"],
+            category: "Drift",
+            car_id: "bmw-m4-competition",
+            resolution: "4K Ultra HD"
+          },
+          {
+            title: "Nissan GT-R Nismo // Cyberpunk Neon Rain",
+            url: "https://images.unsplash.com/photo-1607603750909-408e193868c7?auto=format&fit=crop&w=2560&q=90",
+            device_type: "desktop",
+            sections: ["wallpapers", "cars"],
+            category: "Supercars",
+            car_id: "nissan-gtr-r35",
+            resolution: "4K Ultra HD"
+          },
+          {
+            title: "Porsche 911 GT3 RS // Apex Predator Nürburgring",
+            url: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=2560&q=90",
+            device_type: "desktop",
+            sections: ["wallpapers", "cars"],
+            category: "Track Day",
+            car_id: "porsche-gt3-rs-992",
+            resolution: "4K Ultra HD"
+          },
+          {
+            title: "Ferrari SF90 Stradale // Rosso Corsa Highway",
+            url: "https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=2560&q=90",
+            device_type: "desktop",
+            sections: ["wallpapers"],
+            category: "Supercars",
+            car_id: "ferrari-sf90",
+            resolution: "4K Ultra HD"
+          },
+          {
+            title: "Toyota Supra MK4 // 2JZ Smoke Machine Mobile Wallpaper",
+            url: "https://images.unsplash.com/photo-1629897048514-3dd7414fe72a?auto=format&fit=crop&w=1080&h=1920&q=90",
+            device_type: "mobile",
+            sections: ["wallpapers", "cars"],
+            category: "Drift",
+            car_id: "toyota-supra-mk4",
+            resolution: "1080x1920 Vertical"
+          },
+          {
+            title: "Lamborghini Aventador SVJ // Night Flame Mobile Lockscreen",
+            url: "https://images.unsplash.com/photo-1541348263662-e0c8de4259ba?auto=format&fit=crop&w=1080&h=1920&q=90",
+            device_type: "mobile",
+            sections: ["wallpapers"],
+            category: "Supercars",
+            car_id: "lamborghini-aventador-svj",
+            resolution: "1080x1920 Vertical"
+          },
+          {
+            title: "Mazda RX-7 Spirit R // Gunsai Touge Mobile Wallpaper",
+            url: "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1080&h=1920&q=90",
+            device_type: "mobile",
+            sections: ["wallpapers", "cars"],
+            category: "JDM Culture",
+            car_id: "mazda-rx7-spirit-r",
+            resolution: "1080x1920 Vertical"
+          },
+          {
+            title: "Bugatti Chiron Super Sport // French Racing Blue 4K",
+            url: "https://images.unsplash.com/photo-1508974239320-0a029497e820?auto=format&fit=crop&w=2560&q=90",
+            device_type: "desktop",
+            sections: ["wallpapers"],
+            category: "Supercars",
+            car_id: "bugatti-chiron",
+            resolution: "4K Ultra HD"
+          }
+        ];
+
+        for (const w of seedWallpapers) {
+          await client.query(
+            `INSERT INTO images (title, url, device_type, sections, category, car_id, resolution, views, downloads, likes)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, 120, 45, 18);`,
+            [w.title, w.url, w.device_type, w.sections, w.category, w.car_id, w.resolution]
+          );
+        }
+        console.log("Seeded initial wallpapers into Neon DB.");
+      }
+      await client.query("INSERT INTO system_settings (key, value) VALUES ('wallpapers_seeded', 'true') ON CONFLICT (key) DO NOTHING;");
     }
 
   } catch (err) {

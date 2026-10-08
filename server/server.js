@@ -16,7 +16,8 @@ const ROOT_DIR = path.resolve(__dirname, "..");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "driftverse_jwt_super_secret_speed_2026";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "driftadmin2026";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "soxibgaybullayev439@gmail.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "s0x1bj0n$02$";
 
 app.use(cors());
 app.use(express.json());
@@ -184,33 +185,44 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-// Admin-Only Login with Dedicated Gateway Password
+// Admin-Only Login with Dedicated Email & Password
 app.post("/api/auth/admin-login", async (req, res) => {
   try {
-    const { password } = req.body;
-    if (!password) {
-      return res.status(400).json({ error: "Admin parolini kiriting!" });
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: "Admin email manzili va maxfiy parolini kiriting!" });
     }
 
-    // Check against configured ADMIN_PASSWORD
-    if (password !== ADMIN_PASSWORD) {
-      // Also check if admin user in database has this password
-      const adminUser = await pool.query("SELECT * FROM users WHERE role = 'admin' LIMIT 1;");
-      let matched = false;
+    const cleanEmail = email.trim().toLowerCase();
+    const targetEmail = (process.env.ADMIN_EMAIL || "soxibgaybullayev439@gmail.com").toLowerCase();
+    const targetPassword = process.env.ADMIN_PASSWORD || "s0x1bj0n$02$";
+
+    // Strictly locked: ONLY the specified administrator email is allowed
+    if (cleanEmail !== targetEmail) {
+      return res.status(401).json({ error: "Kirish rad etildi: Faqat belgilangan administrator ruxsatiga ega!" });
+    }
+
+    // Verify password against environment or bcrypt hash in Neon DB
+    let isValid = false;
+    if (password === targetPassword) {
+      isValid = true;
+    } else {
+      const adminUser = await pool.query("SELECT * FROM users WHERE email = $1 AND role = 'admin' LIMIT 1;", [cleanEmail]);
       if (adminUser.rows.length > 0) {
-        matched = await bcrypt.compare(password, adminUser.rows[0].password_hash);
-      }
-      if (!matched) {
-        return res.status(401).json({ error: "Admin paroli noto'g'ri! Ruxsat berilmadi." });
+        isValid = await bcrypt.compare(password, adminUser.rows[0].password_hash);
       }
     }
 
-    // Get or create admin user info
-    let adminRecord = await pool.query("SELECT * FROM users WHERE role = 'admin' LIMIT 1;");
+    if (!isValid) {
+      return res.status(401).json({ error: "Admin paroli noto'g'ri! Kirish rad etildi." });
+    }
+
+    // Get admin user info from database
+    let adminRecord = await pool.query("SELECT * FROM users WHERE email = $1 LIMIT 1;", [cleanEmail]);
     const admin = adminRecord.rows[0] || {
       id: 1,
-      username: "admin",
-      email: "admin@driftverse.io",
+      username: "soxibjon",
+      email: cleanEmail,
       role: "admin"
     };
 
@@ -226,13 +238,14 @@ app.post("/api/auth/admin-login", async (req, res) => {
       user: {
         id: admin.id,
         username: admin.username,
+        email: admin.email,
         role: "admin",
         avatar: admin.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
       }
     });
   } catch (err) {
     console.error("Admin login error:", err);
-    res.status(500).json({ error: "Admin tizimiga kirishda xato" });
+    res.status(500).json({ error: "Admin tizimiga kirishda xato yuz berdi" });
   }
 });
 
@@ -385,6 +398,83 @@ app.post("/api/videos", requireAdmin, async (req, res) => {
   }
 });
 
+// Admin: Update / Edit Existing Video
+app.put("/api/videos/:id", requireAdmin, async (req, res) => {
+  try {
+    const videoId = parseInt(req.params.id);
+    const { url, title, category, description, duration, channel_name } = req.body;
+    if (!title || !title.trim()) {
+      return res.status(400).json({ error: "Video nomi (title) kiritilishi shart!" });
+    }
+
+    const check = await pool.query("SELECT * FROM videos WHERE id = $1;", [videoId]);
+    if (check.rows.length === 0) {
+      return res.status(404).json({ error: "Video topilmadi!" });
+    }
+    const current = check.rows[0];
+
+    let youtubeId = current.youtube_id;
+    let cleanUrl = current.youtube_url;
+    let thumbnail = current.thumbnail;
+
+    if (url && url.trim()) {
+      const extractedId = extractYouTubeId(url);
+      if (extractedId) {
+        youtubeId = extractedId;
+        cleanUrl = `https://www.youtube.com/watch?v=${extractedId}`;
+        thumbnail = `https://img.youtube.com/vi/${extractedId}/maxresdefault.jpg`;
+      }
+    }
+
+    let durationSec = current.duration_sec || 300;
+    const durStr = duration ? duration.trim() : current.duration;
+    if (durStr && durStr.includes(":")) {
+      const parts = durStr.split(":");
+      if (parts.length === 2) {
+        durationSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      } else if (parts.length === 3) {
+        durationSec = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+      }
+    }
+
+    const updateQuery = `
+      UPDATE videos
+      SET 
+        youtube_id = $1,
+        youtube_url = $2,
+        title = $3,
+        category = $4,
+        description = $5,
+        duration = $6,
+        duration_sec = $7,
+        thumbnail = $8,
+        channel_name = $9
+      WHERE id = $10
+      RETURNING *;
+    `;
+    const result = await pool.query(updateQuery, [
+      youtubeId,
+      cleanUrl,
+      title.trim(),
+      category || current.category || "Drift",
+      description !== undefined ? description : current.description,
+      durStr || "05:00",
+      durationSec,
+      thumbnail,
+      channel_name || current.channel_name || "DRIFTVERSE",
+      videoId
+    ]);
+
+    res.json({
+      message: "Video ma'lumotlari muvaffaqiyatli tahrirlandi!",
+      video: result.rows[0]
+    });
+  } catch (err) {
+    console.error("Update video error:", err);
+    res.status(500).json({ error: "Videoni tahrirlashda xatolik yuz berdi" });
+  }
+});
+
 // Admin: Delete Video
 app.delete("/api/videos/:id", requireAdmin, async (req, res) => {
   try {
@@ -493,17 +583,192 @@ app.post("/api/videos/:id/view", async (req, res) => {
   }
 });
 
+// --------------------------------------------------------------------------
+// IMAGES & WALLPAPERS ROUTES (NEON DB)
+// --------------------------------------------------------------------------
+
+// Get Images (Supports filters: ?section=wallpapers|cars, ?device_type=desktop|mobile, ?category=...)
+app.get("/api/images", async (req, res) => {
+  try {
+    const { section, device_type, category, car_id } = req.query;
+    let query = "SELECT * FROM images WHERE 1=1";
+    const params = [];
+
+    if (section) {
+      params.push(section);
+      query += ` AND $${params.length} = ANY(sections)`;
+    }
+    if (device_type && device_type !== "all") {
+      params.push(device_type);
+      query += ` AND device_type = $${params.length}`;
+    }
+    if (category && category !== "all") {
+      params.push(category);
+      query += ` AND category = $${params.length}`;
+    }
+    if (car_id) {
+      params.push(car_id);
+      query += ` AND car_id = $${params.length}`;
+    }
+
+    query += " ORDER BY created_at DESC;";
+    const result = await pool.query(query, params);
+    res.json({ images: result.rows });
+  } catch (err) {
+    console.error("Get images error:", err);
+    res.status(500).json({ error: "Rasmlarni yuklashda xatolik yuz berdi" });
+  }
+});
+
+// Get Single Image
+app.get("/api/images/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const result = await pool.query("SELECT * FROM images WHERE id = $1;", [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: "Rasm topilmadi!" });
+    res.json({ image: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: "Xatolik" });
+  }
+});
+
+// Admin: Add New Image / Wallpaper
+app.post("/api/images", requireAdmin, async (req, res) => {
+  try {
+    const { title, url, device_type, sections, category, car_id, resolution } = req.body;
+    if (!title || !url) {
+      return res.status(400).json({ error: "Rasm sarlavhasi va URL havolasi kiritilishi shart!" });
+    }
+
+    let sectionsArr = Array.isArray(sections) ? sections : ["wallpapers"];
+    if (typeof sections === "string") {
+      sectionsArr = sections.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+    if (sectionsArr.length === 0) sectionsArr = ["wallpapers"];
+
+    const insertQuery = `
+      INSERT INTO images (title, url, device_type, sections, category, car_id, resolution)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *;
+    `;
+    const result = await pool.query(insertQuery, [
+      title.trim(),
+      url.trim(),
+      device_type || "desktop",
+      sectionsArr,
+      category || "Supercars",
+      car_id || null,
+      resolution || "4K Ultra HD"
+    ]);
+
+    res.status(201).json({
+      message: "Rasm / Wallpaper muvaffaqiyatli saqlandi!",
+      image: result.rows[0]
+    });
+  } catch (err) {
+    console.error("Add image error:", err);
+    res.status(500).json({ error: "Rasm qo'shishda xatolik yuz berdi" });
+  }
+});
+
+// Admin: Update Image
+app.put("/api/images/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { title, url, device_type, sections, category, car_id, resolution } = req.body;
+    if (!title) {
+      return res.status(400).json({ error: "Sarlavha kiritilishi shart!" });
+    }
+
+    let sectionsArr = null;
+    if (sections) {
+      sectionsArr = Array.isArray(sections) ? sections : sections.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+
+    const updateQuery = `
+      UPDATE images
+      SET
+        title = COALESCE($1, title),
+        url = COALESCE($2, url),
+        device_type = COALESCE($3, device_type),
+        sections = COALESCE($4, sections),
+        category = COALESCE($5, category),
+        car_id = COALESCE($6, car_id),
+        resolution = COALESCE($7, resolution)
+      WHERE id = $8
+      RETURNING *;
+    `;
+    const result = await pool.query(updateQuery, [
+      title.trim(),
+      url ? url.trim() : null,
+      device_type || null,
+      sectionsArr,
+      category || null,
+      car_id !== undefined ? car_id : null,
+      resolution || null,
+      id
+    ]);
+
+    if (result.rows.length === 0) return res.status(404).json({ error: "Rasm topilmadi!" });
+
+    res.json({
+      message: "Rasm ma'lumotlari yangilandi!",
+      image: result.rows[0]
+    });
+  } catch (err) {
+    console.error("Update image error:", err);
+    res.status(500).json({ error: "Rasmni tahrirlashda xatolik" });
+  }
+});
+
+// Admin: Delete Image
+app.delete("/api/images/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const result = await pool.query("DELETE FROM images WHERE id = $1 RETURNING id;", [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: "Rasm topilmadi!" });
+    res.json({ message: "Rasm Neon DB dan o'chirildi", id });
+  } catch (err) {
+    console.error("Delete image error:", err);
+    res.status(500).json({ error: "Rasmni o'chirishda xatolik" });
+  }
+});
+
+// Download Counter
+app.post("/api/images/:id/download", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    await pool.query("UPDATE images SET downloads = downloads + 1 WHERE id = $1;", [id]);
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Xatolik" });
+  }
+});
+
+// Like Image
+app.post("/api/images/:id/like", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const result = await pool.query("UPDATE images SET likes = likes + 1 WHERE id = $1 RETURNING likes;", [id]);
+    res.json({ likes: result.rows[0]?.likes || 0 });
+  } catch {
+    res.status(500).json({ error: "Xatolik" });
+  }
+});
+
 // Admin Stats
 app.get("/api/admin/stats", requireAdmin, async (req, res) => {
   try {
     const usersCount = await pool.query("SELECT COUNT(*)::int AS c FROM users;");
     const videosCount = await pool.query("SELECT COUNT(*)::int AS c FROM videos;");
+    const imagesCount = await pool.query("SELECT COUNT(*)::int AS c FROM images;");
     const commentsCount = await pool.query("SELECT COUNT(*)::int AS c FROM comments;");
     const likesCount = await pool.query("SELECT COUNT(*)::int AS c FROM video_likes;");
 
     res.json({
       total_users: usersCount.rows[0].c,
       total_videos: videosCount.rows[0].c,
+      total_images: imagesCount.rows[0].c,
       total_comments: commentsCount.rows[0].c,
       total_likes: likesCount.rows[0].c,
       db_status: "Neon PostgreSQL (Connected)",

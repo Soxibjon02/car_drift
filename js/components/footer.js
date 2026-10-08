@@ -33,6 +33,7 @@ export function renderFooter(container) {
             <ul class="footer-links">
               <li><a data-route="cars">Performance Cars</a></li>
               <li><a data-route="videos">Videos & Footage</a></li>
+              <li><a data-route="wallpapers">4K Wallpapers & Media</a></li>
               <li><a data-route="compare">Side-by-Side Compare</a></li>
               <li><a data-route="rankings">Global Speed Rankings</a></li>
               <li><a data-route="trending">Trending Machines</a></li>
@@ -91,10 +92,11 @@ export function renderFooter(container) {
         <!-- Bottom Copyright & Legal -->
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-size:0.75rem; color:var(--text-muted); border-top:1px solid var(--border-subtle); padding-top:16px;">
           <div>© 2026 DRIFTVERSE Platform. All rights reserved.</div>
-          <div style="display:flex; gap:16px;">
+          <div style="display:flex; align-items:center; gap:16px;">
             <a href="#">Privacy</a>
             <a href="#">Terms</a>
             <a href="#">Contact</a>
+            <a data-route="admin" style="cursor:pointer; opacity:0.2; font-size:0.72rem; color:var(--text-muted); text-decoration:none; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.2'" title="Console">⚡ Core</a>
           </div>
         </div>
       </div>

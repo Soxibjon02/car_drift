@@ -17,16 +17,19 @@ import { pwa } from "./services/pwa.js";
 // Pages
 import { renderHomePage } from "./pages/home.js";
 import { renderVideosPage } from "./pages/videos.js";
+import { renderWatchPage } from "./pages/watch.js";
 import { renderCarsPage } from "./pages/cars.js";
 import { renderComparePage } from "./pages/compare.js";
 import { renderRankingsPage } from "./pages/rankings.js";
 import { renderTrendingPage } from "./pages/trending.js";
 import { renderGaragePage } from "./pages/garage.js";
+import { renderWallpapersPage } from "./pages/wallpapers.js";
 import { renderAdminPage } from "./pages/admin.js";
 
 class DriftverseApp {
   constructor() {
     this.currentRoute = "home";
+    this.currentWatchId = null;
     this.initialBrandFilter = "All";
 
     // Component instances
@@ -44,7 +47,6 @@ class DriftverseApp {
 
     // 2. Initialize Modals
     this.searchModal = new SearchModal();
-    this.videoPlayerModal = new VideoPlayerModal();
     this.carDetailModal = new CarDetailModal();
     this.authModal = new AuthModal();
 
@@ -56,10 +58,11 @@ class DriftverseApp {
     this.registerEventListeners();
 
     // 4. Initial Route from URL Hash or default
-    const hash = window.location.hash.replace("#", "");
-    const validRoutes = ["home", "videos", "cars", "compare", "rankings", "trending", "garage", "admin"];
-    if (hash && validRoutes.includes(hash)) {
-      this.currentRoute = hash;
+    const rawHash = window.location.hash.replace("#", "");
+    const baseRoute = rawHash.split("?")[0].split("/")[0];
+    const validRoutes = ["home", "videos", "watch", "cars", "wallpapers", "compare", "rankings", "trending", "garage", "admin"];
+    if (baseRoute && validRoutes.includes(baseRoute)) {
+      this.currentRoute = baseRoute;
     }
 
     // 5. Render Navigation & Initial View
@@ -80,12 +83,12 @@ class DriftverseApp {
 
     // 8. Sync live Videos and Auth with Neon PostgreSQL Backend
     api.getVideos().then((freshVideos) => {
-      if (freshVideos && freshVideos.length > 0) {
+      if (Array.isArray(freshVideos)) {
         store.videos = freshVideos.map((fv) => ({
           ...fv,
           id: fv.id,
           youtube_id: fv.youtube_id,
-          likes: fv.likes_count || fv.likes || 0,
+          likes: fv.likes_count !== undefined ? fv.likes_count : (fv.likes || 0),
           uploadDate: fv.created_at ? fv.created_at.split("T")[0] : "2024-09-15",
           isTrending: true,
           isFeatured: true
@@ -94,8 +97,22 @@ class DriftverseApp {
           localStorage.setItem("driftverse_videos_v1", JSON.stringify(store.videos));
         } catch {}
         store.notify();
-        if (this.currentRoute === "home" || this.currentRoute === "videos" || this.currentRoute === "trending") {
-          this.renderCurrentPage();
+        if (this.currentRoute === "home" || this.currentRoute === "videos" || this.currentRoute === "trending" || this.currentRoute === "watch") {
+          this.render();
+        }
+      }
+    }).catch(() => {});
+
+    // 8b. Sync Wallpapers & Media with Neon PostgreSQL Backend
+    api.getImages().then((freshImages) => {
+      if (Array.isArray(freshImages)) {
+        store.images = freshImages;
+        try {
+          localStorage.setItem("driftverse_images_v1", JSON.stringify(freshImages));
+        } catch {}
+        store.notify();
+        if (this.currentRoute === "wallpapers") {
+          this.render();
         }
       }
     }).catch(() => {});
@@ -115,6 +132,17 @@ class DriftverseApp {
       this.navigateTo(route);
     });
 
+    // Dedicated Watch Video Event (Replaces modal with dedicated page)
+    window.addEventListener("driftverse:watch-video", (e) => {
+      const videoId = e.detail?.videoId;
+      if (videoId) {
+        this.currentWatchId = videoId;
+        this.navigateTo(`watch?id=${encodeURIComponent(videoId)}`);
+      } else {
+        this.navigateTo("videos");
+      }
+    });
+
     // Auth Changed Event
     window.addEventListener("driftverse:auth-changed", () => {
       this.updateNavbar();
@@ -125,9 +153,9 @@ class DriftverseApp {
 
     // Hash change event (back/forward browser buttons)
     window.addEventListener("hashchange", () => {
-      const hash = window.location.hash.replace("#", "");
-      if (hash && hash !== this.currentRoute) {
-        this.navigateTo(hash, false);
+      const rawHash = window.location.hash.replace("#", "");
+      if (rawHash) {
+        this.navigateTo(rawHash, false);
       }
     });
 
@@ -144,9 +172,22 @@ class DriftverseApp {
   }
 
   navigateTo(route, updateHash = true) {
-    this.currentRoute = route;
+    const raw = route.replace("#", "");
+    const base = raw.split("?")[0].split("/")[0];
+    this.currentRoute = base;
+
+    if (base === "watch") {
+      const matchParam = raw.match(/[?&]id=([^&]+)/);
+      if (matchParam) {
+        this.currentWatchId = decodeURIComponent(matchParam[1]);
+      } else {
+        const matchSlash = raw.match(/^watch\/(.+)$/);
+        if (matchSlash) this.currentWatchId = decodeURIComponent(matchSlash[1]);
+      }
+    }
+
     if (updateHash) {
-      window.location.hash = `#${route}`;
+      window.location.hash = `#${raw}`;
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
     this.render();
@@ -176,9 +217,15 @@ class DriftverseApp {
       case "videos":
         renderVideosPage(pageContainer);
         break;
+      case "watch":
+        renderWatchPage(pageContainer, this.currentWatchId);
+        break;
       case "cars":
         renderCarsPage(pageContainer, this.initialBrandFilter);
         this.initialBrandFilter = "All"; // reset once applied
+        break;
+      case "wallpapers":
+        renderWallpapersPage(pageContainer);
         break;
       case "compare":
         renderComparePage(pageContainer);

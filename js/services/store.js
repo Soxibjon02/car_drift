@@ -14,7 +14,8 @@ const STORAGE_KEYS = {
   THEME: "driftverse_theme_v1",
   SOUND: "driftverse_sound_v1",
   COMPARE: "driftverse_compare_v1",
-  BATTLES: "driftverse_battles_v1"
+  BATTLES: "driftverse_battles_v1",
+  IMAGES: "driftverse_images_v1"
 };
 
 class Store {
@@ -31,6 +32,10 @@ class Store {
     // Load or initialize Videos
     const storedVideos = localStorage.getItem(STORAGE_KEYS.VIDEOS);
     this.videos = storedVideos ? JSON.parse(storedVideos) : [...initialVideos];
+
+    // Load or initialize Images / Wallpapers
+    const storedImages = localStorage.getItem(STORAGE_KEYS.IMAGES);
+    this.images = storedImages ? JSON.parse(storedImages) : [];
 
     // Load or initialize Users
     const storedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
@@ -80,6 +85,7 @@ class Store {
   save() {
     localStorage.setItem(STORAGE_KEYS.CARS, JSON.stringify(this.cars));
     localStorage.setItem(STORAGE_KEYS.VIDEOS, JSON.stringify(this.videos));
+    localStorage.setItem(STORAGE_KEYS.IMAGES, JSON.stringify(this.images));
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(this.users));
     localStorage.setItem(STORAGE_KEYS.COMMENTS, JSON.stringify(this.comments));
     localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(this.currentUser));
@@ -231,7 +237,7 @@ class Store {
   }
 
   updateVideo(id, updatedFields) {
-    const index = this.videos.findIndex((v) => v.id === id);
+    const index = this.videos.findIndex((v) => v.id == id || String(v.id) === String(id) || v.youtube_id === id);
     if (index !== -1) {
       this.videos[index] = { ...this.videos[index], ...updatedFields };
       this.notify();
@@ -241,8 +247,59 @@ class Store {
   }
 
   deleteVideo(id) {
-    this.videos = this.videos.filter((v) => v.id !== id);
-    this.comments = this.comments.filter((c) => c.videoId !== id);
+    this.videos = this.videos.filter((v) => v.id != id && String(v.id) !== String(id) && v.youtube_id !== id);
+    this.comments = this.comments.filter((c) => c.videoId != id && c.video_id != id);
+    this.notify();
+  }
+
+  // --- IMAGES / WALLPAPERS CRUD ---
+  getImages(filter = {}) {
+    let list = [...this.images];
+    if (filter.section) {
+      list = list.filter((img) => img.sections && img.sections.includes(filter.section));
+    }
+    if (filter.device_type && filter.device_type !== "all") {
+      list = list.filter((img) => img.device_type === filter.device_type);
+    }
+    if (filter.category && filter.category !== "all") {
+      list = list.filter((img) => img.category === filter.category);
+    }
+    if (filter.car_id) {
+      list = list.filter((img) => img.car_id === filter.car_id);
+    }
+    return list;
+  }
+
+  getImageById(id) {
+    return this.images.find((img) => img.id == id || String(img.id) === String(id));
+  }
+
+  addImage(imageData) {
+    const newImage = {
+      ...imageData,
+      id: imageData.id || `img-${Date.now()}`,
+      views: imageData.views || 0,
+      downloads: imageData.downloads || 0,
+      likes: imageData.likes || 0,
+      created_at: new Date().toISOString()
+    };
+    this.images.unshift(newImage);
+    this.notify();
+    return newImage;
+  }
+
+  updateImage(id, updatedFields) {
+    const index = this.images.findIndex((img) => img.id == id || String(img.id) === String(id));
+    if (index !== -1) {
+      this.images[index] = { ...this.images[index], ...updatedFields };
+      this.notify();
+      return this.images[index];
+    }
+    return null;
+  }
+
+  deleteImage(id) {
+    this.images = this.images.filter((img) => img.id != id && String(img.id) !== String(id));
     this.notify();
   }
 
@@ -274,6 +331,44 @@ class Store {
   isVideoLiked(id) {
     if (!this.currentUser || !this.currentUser.likedVideos) return false;
     return this.currentUser.likedVideos.includes(id);
+  }
+
+  toggleLikeImage(id) {
+    if (!this.currentUser) return { error: "AUTH_REQUIRED" };
+    if (!this.currentUser.likedImages) this.currentUser.likedImages = [];
+
+    const img = this.getImageById(id);
+    if (!img) return null;
+
+    const isLiked = this.currentUser.likedImages.includes(id) || this.currentUser.likedImages.includes(Number(id));
+    if (isLiked) {
+      this.currentUser.likedImages = this.currentUser.likedImages.filter((iId) => iId != id);
+      img.likes = Math.max(0, (img.likes || 0) - 1);
+    } else {
+      this.currentUser.likedImages.push(id);
+      img.likes = (img.likes || 0) + 1;
+    }
+
+    const uIndex = this.users.findIndex((u) => u.id === this.currentUser.id);
+    if (uIndex !== -1) {
+      this.users[uIndex].likedImages = [...this.currentUser.likedImages];
+    }
+
+    this.notify();
+    return { liked: !isLiked, count: img.likes };
+  }
+
+  isImageLiked(id) {
+    if (!this.currentUser || !this.currentUser.likedImages) return false;
+    return this.currentUser.likedImages.includes(id) || this.currentUser.likedImages.includes(Number(id));
+  }
+
+  recordImageDownload(id) {
+    const img = this.getImageById(id);
+    if (img) {
+      img.downloads = (img.downloads || 0) + 1;
+      this.notify();
+    }
   }
 
   // --- SMART RACE VIDEO RECOMMENDATION ---

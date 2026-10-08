@@ -49,9 +49,9 @@ class AuthService {
     }
   }
 
-  async adminLogin(password) {
+  async adminLogin(email, password) {
     try {
-      const res = await api.adminLogin(password);
+      const res = await api.adminLogin(email, password);
       store.setCurrentUser(res.user);
       window.dispatchEvent(new CustomEvent("driftverse:auth-changed", { detail: { user: res.user } }));
       return { success: true, user: res.user };

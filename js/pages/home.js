@@ -251,23 +251,26 @@ export function renderHomePage(container) {
 
 // Reusable Video Card HTML Generator
 export function renderVideoCardHtml(vid, extraClass = "") {
+  const thumb = vid.thumbnail || `https://img.youtube.com/vi/${vid.youtube_id || vid.id}/hqdefault.jpg`;
+  const author = vid.channel_name || vid.author || "DRIFTVERSE";
+
   return `
     <div class="video-card ${extraClass}" data-video-id="${vid.id}">
       <div class="video-card-media">
-        <img src="${vid.thumbnail}" class="video-card-img" alt="${vid.title}" loading="lazy" />
+        <img src="${thumb}" class="video-card-img" alt="${vid.title}" loading="lazy" />
         <div class="video-play-overlay">
           <div class="play-circle">▶</div>
         </div>
-        <span class="video-duration">${vid.duration}</span>
+        <span class="video-duration">${vid.duration || '05:00'}</span>
       </div>
       <div class="video-card-body">
         <div class="video-cars-chips">
-          <span class="badge">${vid.category}</span>
-          ${vid.cars ? vid.cars.map((c) => `<span class="video-car-chip">${c}</span>`).join("") : ""}
+          <span class="badge">${vid.category || 'Drift'}</span>
+          ${vid.cars && Array.isArray(vid.cars) ? vid.cars.map((c) => `<span class="video-car-chip">${c}</span>`).join("") : ""}
         </div>
         <h4 class="video-title">${vid.title}</h4>
         <div class="video-meta-row">
-          <span>${vid.author}</span>
+          <span>${author}</span>
           <span>${(vid.views || 0).toLocaleString()} views</span>
         </div>
       </div>
@@ -296,8 +299,8 @@ export function renderCarCardHtml(car, extraClass = "") {
             ⇄
           </button>
         </div>
-        <button class="car-rev-btn btn-card-rev" data-sound="${car.soundType}">
-          Sound
+        <button class="car-rev-btn btn-card-rev" data-sound="${car.soundType}" data-car-id="${car.id}" title="${car.youtube_audio ? 'Play authentic YouTube exhaust sound' : 'Play engine acoustic rev'}">
+          ${car.youtube_audio ? '🔊 Sound' : 'Sound'}
         </button>
       </div>
 
@@ -430,8 +433,14 @@ function attachHomeEvents(container) {
   container.querySelectorAll(".btn-card-rev").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const soundType = btn.getAttribute("data-sound");
-      soundEngine.playRev(soundType);
+      const carId = btn.getAttribute("data-car-id");
+      const car = carId ? store.getCarById(carId) : null;
+      if (car) {
+        soundEngine.playCarAudio(car);
+      } else {
+        const soundType = btn.getAttribute("data-sound");
+        soundEngine.playRev(soundType);
+      }
     });
   });
 

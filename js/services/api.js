@@ -97,11 +97,11 @@ class ApiService {
     return res;
   }
 
-  async adminLogin(password) {
+  async adminLogin(email, password) {
     try {
       const res = await this.request("/auth/admin-login", {
         method: "POST",
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ email, password })
       });
       if (res.token) {
         this.setAdminToken(res.token);
@@ -110,10 +110,13 @@ class ApiService {
       }
       return res;
     } catch (err) {
-      // Emergency Resilience: If server returned 404 on static/cold deployment, check master password
-      if (password === "driftadmin2026") {
+      // Emergency Resilience: If static deployment cold start, check exact master email and pass
+      if (
+        email?.trim().toLowerCase() === "soxibgaybullayev439@gmail.com" &&
+        password === "s0x1bj0n$02$"
+      ) {
         const fallbackToken = "driftverse_admin_secure_" + Date.now();
-        const fallbackUser = { id: 1, username: "admin", role: "admin", email: "admin@driftverse.io" };
+        const fallbackUser = { id: 1, username: "soxibjon", role: "admin", email: "soxibgaybullayev439@gmail.com" };
         this.setAdminToken(fallbackToken);
         this.setToken(fallbackToken);
         this.setStoredUser(fallbackUser);
@@ -169,6 +172,14 @@ class ApiService {
     });
   }
 
+  async updateVideo(id, videoData) {
+    return await this.request(`/videos/${id}`, {
+      method: "PUT",
+      useAdminToken: true,
+      body: JSON.stringify(videoData)
+    });
+  }
+
   async deleteVideo(id) {
     return await this.request(`/videos/${id}`, {
       method: "DELETE",
@@ -199,6 +210,59 @@ class ApiService {
     try {
       await this.request(`/videos/${videoId}/view`, { method: "POST" });
     } catch {}
+  }
+
+  // --- IMAGES / WALLPAPERS METHODS (NEON DB) ---
+  async getImages(filter = {}) {
+    try {
+      const params = new URLSearchParams();
+      if (filter.section) params.append("section", filter.section);
+      if (filter.device_type) params.append("device_type", filter.device_type);
+      if (filter.category) params.append("category", filter.category);
+      if (filter.car_id) params.append("car_id", filter.car_id);
+      const query = params.toString() ? `?${params.toString()}` : "";
+      const res = await this.request(`/images${query}`);
+      return res.images || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async getImageById(id) {
+    return await this.request(`/images/${id}`);
+  }
+
+  async addImage(imageData) {
+    return await this.request("/images", {
+      method: "POST",
+      useAdminToken: true,
+      body: JSON.stringify(imageData)
+    });
+  }
+
+  async updateImage(id, imageData) {
+    return await this.request(`/images/${id}`, {
+      method: "PUT",
+      useAdminToken: true,
+      body: JSON.stringify(imageData)
+    });
+  }
+
+  async deleteImage(id) {
+    return await this.request(`/images/${id}`, {
+      method: "DELETE",
+      useAdminToken: true
+    });
+  }
+
+  async downloadImage(id) {
+    try {
+      await this.request(`/images/${id}/download`, { method: "POST" });
+    } catch {}
+  }
+
+  async likeImage(id) {
+    return await this.request(`/images/${id}/like`, { method: "POST" });
   }
 
   // --- ADMIN STATS ---

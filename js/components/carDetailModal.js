@@ -57,7 +57,18 @@ export class CarDetailModal {
         v.title.toLowerCase().includes(car.model.toLowerCase())
     );
 
-    const activeImg = car.gallery && car.gallery[this.activeImageIdx] ? car.gallery[this.activeImageIdx] : car.image;
+    // Associated section='cars' wallpapers and gallery
+    const extraCarImages = store.getImages({ section: "cars" }).filter(
+      (img) => !img.car_id || img.car_id === car.id
+    );
+    const combinedGallery = [
+      ...(car.gallery || [car.image]),
+      ...extraCarImages.map((i) => i.url)
+    ];
+    const uniqueGallery = [...new Set(combinedGallery)];
+    this.galleryList = uniqueGallery;
+
+    const activeImg = uniqueGallery[this.activeImageIdx] || car.image;
 
     this.container.innerHTML = `
       <div class="modal-overlay" id="car-detail-backdrop">
@@ -93,18 +104,18 @@ export class CarDetailModal {
               </div>
 
               <!-- Engine Acoustic Rev Button -->
-              <button class="btn btn-primary btn-sm" id="btn-dyno-rev" style="min-height:38px;">
-                Engine Acoustic
+              <button class="btn btn-primary btn-sm" id="btn-dyno-rev" style="min-height:38px; display:inline-flex; align-items:center; gap:6px;" title="${car.youtube_audio ? 'Play authentic YouTube exhaust audio' : 'Play acoustic rev'}">
+                <span>🔊</span> ${car.youtube_audio ? 'YouTube Sound Stream' : 'Engine Acoustic'}
               </button>
             </div>
           </div>
 
           <!-- Gallery Thumbnails -->
           ${
-            car.gallery && car.gallery.length > 1
+            uniqueGallery.length > 1
               ? `
             <div style="background:#111111; padding:10px 24px; display:flex; gap:10px; border-bottom:1px solid var(--border-subtle); overflow-x:auto;">
-              ${car.gallery
+              ${uniqueGallery
                 .map(
                   (imgUrl, idx) => `
                 <img 
@@ -224,11 +235,11 @@ export class CarDetailModal {
       });
     }
 
-    // Dyno rev acoustic sound button
+    // Dyno rev acoustic sound button (plays YouTube exhaust stream or synthesized rev)
     const revBtn = this.container.querySelector("#btn-dyno-rev");
     if (revBtn && this.car) {
       revBtn.addEventListener("click", () => {
-        soundEngine.playRev(this.car.soundType);
+        soundEngine.playCarAudio(this.car);
       });
     }
 
@@ -238,10 +249,10 @@ export class CarDetailModal {
         const idx = parseInt(thumb.getAttribute("data-idx"), 10);
         this.activeImageIdx = idx;
         const mainImg = this.container.querySelector("#car-detail-main-img");
-        if (mainImg && this.car.gallery && this.car.gallery[idx]) {
+        if (mainImg && this.galleryList && this.galleryList[idx]) {
           mainImg.style.opacity = "0.4";
           setTimeout(() => {
-            mainImg.src = this.car.gallery[idx];
+            mainImg.src = this.galleryList[idx];
             mainImg.style.opacity = "1";
           }, 150);
         }

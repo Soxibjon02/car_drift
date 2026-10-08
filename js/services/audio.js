@@ -230,6 +230,76 @@ class SoundEngine {
       }
     } catch (e) {}
   }
+
+  // --- HIDDEN YOUTUBE AUDIO ENGINE (PURE SOUND WITHOUT VIDEO) ---
+  playYoutubeAudio(youtubeUrlOrId, durationSec = 12, startSec = 0) {
+    if (!this.isEnabled()) return;
+    if (!youtubeUrlOrId) return;
+
+    let youtubeId = youtubeUrlOrId.trim();
+    if (youtubeId.includes("youtube.com") || youtubeId.includes("youtu.be")) {
+      const match = youtubeId.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+      if (match) youtubeId = match[1];
+    }
+
+    if (!youtubeId || !/^[a-zA-Z0-9_-]{11}$/.test(youtubeId)) {
+      // Fallback to synthesized rev if invalid
+      this.playRev("v8-supercharged");
+      return;
+    }
+
+    let hiddenContainer = document.getElementById("driftverse-hidden-audio-wrap");
+    if (!hiddenContainer) {
+      hiddenContainer = document.createElement("div");
+      hiddenContainer.id = "driftverse-hidden-audio-wrap";
+      hiddenContainer.style.cssText = "position:fixed; width:1px; height:1px; top:-9999px; left:-9999px; opacity:0; pointer-events:none; z-index:-9999; overflow:hidden;";
+      document.body.appendChild(hiddenContainer);
+    }
+
+    if (this._ytAudioTimeout) {
+      clearTimeout(this._ytAudioTimeout);
+    }
+
+    hiddenContainer.innerHTML = `
+      <iframe 
+        id="driftverse-hidden-yt-audio" 
+        src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&start=${startSec}&controls=0&playsinline=1&enablejsapi=1" 
+        allow="autoplay"
+        style="width:1px; height:1px; border:0;"
+      ></iframe>
+    `;
+
+    window.dispatchEvent(new CustomEvent("driftverse:toast", {
+      detail: { message: "🔊 YouTube stream orqali haqiqiy dvigatel tovushi yangramoqda..." }
+    }));
+
+    this._ytAudioTimeout = setTimeout(() => {
+      this.stopYoutubeAudio();
+    }, durationSec * 1000);
+  }
+
+  stopYoutubeAudio() {
+    if (this._ytAudioTimeout) {
+      clearTimeout(this._ytAudioTimeout);
+      this._ytAudioTimeout = null;
+    }
+    const hiddenContainer = document.getElementById("driftverse-hidden-audio-wrap");
+    if (hiddenContainer) {
+      hiddenContainer.innerHTML = "";
+    }
+  }
+
+  // Play Car Audio (prioritizes YouTube audio link if available)
+  playCarAudio(car) {
+    if (!this.isEnabled()) return;
+    if (car && (car.youtube_audio || car.youtube_sound_url)) {
+      this.playYoutubeAudio(car.youtube_audio || car.youtube_sound_url, 14);
+    } else if (car && car.soundType) {
+      this.playRev(car.soundType);
+    } else {
+      this.playRev("turbo-v6");
+    }
+  }
 }
 
 export const soundEngine = new SoundEngine();
